@@ -47,7 +47,7 @@
                         </h5>
                         <div class="relative ltr:ml-auto rtl:mr-auto">
                             <div class="grid h-11 w-11 place-content-center rounded-full bg-[#ffeccb] text-warning dark:bg-warning dark:text-[#ffeccb] text-lg font-semibold">
-                                {{ App\models\client_users::count() ?? '0' }}
+                                {{ App\models\ClientUser::count() ?? '0' }}
                             </div>
                         </div>
                     </div>

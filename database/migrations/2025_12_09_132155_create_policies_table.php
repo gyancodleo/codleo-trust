@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id()->primary();
             $table->foreignId('category_id')->nullable()->constrained('policies_category')->nullOnDelete();
             $table->string('title');
-            $table->string('description')->nullable();
+            $table->text('description')->nullable();
             $table->string('file_path')->nullable();
             $table->boolean( 'is_published')->default(false);
             $table->integer('created_by')->comment('admin_id');                  

@@ -101,8 +101,8 @@
                     </div>
 
                     <div class="flex justify-end mt-6">
-                        <button type="button" class="btn btn-danger" onclick="hideModal()">Cancel</button>
-                        <button type="submit" class="btn btn-primary ml-4">Save</button>
+                        <button type="button" class="btn btn-danger mr-3" onclick="hideModal()">Cancel</button>
+                        <button type="submit" class="btn btn-primary ml-3">Save</button>
                     </div>
 
                 </form>

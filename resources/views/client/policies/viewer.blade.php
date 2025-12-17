@@ -1,12 +1,6 @@
-<h1 class="text-xl font-semibold mb-4 text-center">{{ $policy->title }}</h1>
+<h1 class="text-xl font-semibold mb-4 text-center" style="text-align:center;">{{ $policy->title }}</h1>
 
 <div class="relative border shadow-sm">
-
-    <div class="absolute inset-0 flex items-center justify-center pointer-events-none opacity-10">
-        <div class="text-2xl rotate-[-25deg]">
-            {{ auth('client')->user()->email }} – {{ now() }}
-        </div>
-    </div>
 
     <div id="viewerContainer" class="relative border h-[90vh]" style="text-align: center;">
 
@@ -97,7 +91,7 @@
     });
 
     function blurDocumentViewer() {
-        let viewer = document.getElementById("viewerContainer");
+        let viewer = document.getElementById("pdfCanvas");
         viewer.style.filter = "blur(12px)";
         viewer.innerHTML += `
         <div id="warningOverlay"

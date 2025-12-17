@@ -18,8 +18,8 @@ return new class extends Migration
             $table->string('password');
             $table->string('company_name')->nullable();
             $table->boolean('is_2fa_enabled')->default(true);
-            $table->unsignedTinyInteger('created_by')->comment('admin_id');
-            $table->unsignedTinyInteger('updated_by')->comment('admin_id');
+            $table->unsignedBigInteger('created_by')->nullable()->change()->comment('admin_id');
+            $table->unsignedBigInteger('updated_by')->nullable()->change()->comment('admin_id');
             $table->timestamps();
         });
     }

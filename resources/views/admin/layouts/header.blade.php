@@ -6,7 +6,9 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <title>Codleo Admin | Policy Control</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link rel="icon" type="image/x-icon" href="favicon.png">
+        <!-- Standard favicon link (PNG format example) -->
+    <link rel="icon" type="image/png" href="{{ asset('assets/images/codleo-favicon-round.png') }}">
+    <link rel="icon" type="image/x-icon" href="{{ asset('assets/images/codleo-favicon-round.png') }}">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -206,7 +208,7 @@
                     <div class="relative flex w-full items-center bg-white px-5 py-2.5 dark:bg-[#0e1726]">
                         <div class="horizontal-logo flex items-center justify-between ltr:mr-2 rtl:ml-2 lg:hidden">
                             <a href="index.html" class="main-logo flex shrink-0 items-center">
-                                <x-application-logo class="ml-[5px] w-8 flex-none" />
+                                <x-application-logo class="ml-[5px] w-32 flex-none" />
                             </a>
 
                             <a href="javascript:;" class="collapse-icon flex flex-none rounded-full bg-white-light/40 p-2 hover:bg-white-light/90 hover:text-primary ltr:ml-2 rtl:mr-2 dark:bg-dark/40 dark:text-[#d0d2d6] dark:hover:bg-dark/60 dark:hover:text-primary lg:hidden" @click="$store.app.toggleSidebar()">
@@ -217,7 +219,7 @@
                                 </svg>
                             </a>
                         </div>
-                        <div class="hidden ltr:mr-2 rtl:ml-2 sm:block">
+                        <!-- <div class="hidden ltr:mr-2 rtl:ml-2 sm:block">
                             <ul class="flex items-center space-x-2 rtl:space-x-reverse dark:text-[#d0d2d6]">
                                 <li>
                                     <a href="apps-calendar.html" class="block rounded-full bg-white-light/40 p-2 hover:bg-white-light/90 hover:text-primary dark:bg-dark/40 dark:hover:bg-dark/60">
@@ -247,7 +249,7 @@
                                     </a>
                                 </li>
                             </ul>
-                        </div>
+                        </div> -->
                         <div x-data="header" class="flex items-center space-x-1.5 ltr:ml-auto rtl:mr-auto rtl:space-x-reverse dark:text-[#d0d2d6] sm:flex-1 ltr:sm:ml-0 sm:rtl:mr-0 lg:space-x-2">
                             <div class="sm:ltr:mr-auto sm:rtl:ml-auto" x-data="{ search: false }" @click.outside="search = false">
                                 <form class="absolute inset-x-0 top-1/2 z-10 m-auto hidden -translate-y-1/2 sm:relative sm:top-0 sm:mx-0 sm:block sm:translate-y-0" :class="{'!block' : search}" @submit.prevent="search = false">
@@ -302,7 +304,7 @@
                                 </a>
                             </div>
 
-                            <div class="dropdown" x-data="dropdown" @click.outside="open = false">
+                            <!-- <div class="dropdown" x-data="dropdown" @click.outside="open = false">
                                 <a href="javascript:;" class="block rounded-full bg-white-light/40 p-2 hover:bg-white-light/90 hover:text-primary dark:bg-dark/40 dark:hover:bg-dark/60" @click="toggle">
                                     <svg width="20" height="20" viewbox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                                         <path d="M22 10C22.0185 10.7271 22 11.0542 22 12C22 15.7712 22 17.6569 20.8284 18.8284C19.6569 20 17.7712 20 14 20H10C6.22876 20 4.34315 20 3.17157 18.8284C2 17.6569 2 15.7712 2 12C2 8.22876 2 6.34315 3.17157 5.17157C4.34315 4 6.22876 4 10 4H13" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"></path>
@@ -360,8 +362,8 @@
                                         </li>
                                     </template>
                                 </ul>
-                            </div>
-                            <div class="dropdown" x-data="dropdown" @click.outside="open = false">
+                            </div> -->
+                            <!-- <div class="dropdown" x-data="dropdown" @click.outside="open = false">
                                 <a href="javascript:;" class="relative block rounded-full bg-white-light/40 p-2 hover:bg-white-light/90 hover:text-primary dark:bg-dark/40 dark:hover:bg-dark/60" @click="toggle">
                                     <svg width="20" height="20" viewbox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                                         <path d="M19.0001 9.7041V9C19.0001 5.13401 15.8661 2 12.0001 2C8.13407 2 5.00006 5.13401 5.00006 9V9.7041C5.00006 10.5491 4.74995 11.3752 4.28123 12.0783L3.13263 13.8012C2.08349 15.3749 2.88442 17.5139 4.70913 18.0116C9.48258 19.3134 14.5175 19.3134 19.291 18.0116C21.1157 17.5139 21.9166 15.3749 20.8675 13.8012L19.7189 12.0783C19.2502 11.3752 19.0001 10.5491 19.0001 9.7041Z" stroke="currentColor" stroke-width="1.5"></path>
@@ -429,7 +431,7 @@
                                         </li>
                                     </template>
                                 </ul>
-                            </div>
+                            </div> -->
                             <div class="dropdown flex-shrink-0" x-data="dropdown" @click.outside="open = false">
                                 <a href="javascript:;" class="group relative" @click="toggle()">
                                     <span><img class="h-9 w-9 rounded-full object-cover saturate-50 group-hover:saturate-100" src="{{ asset('assets/images/profile.png') }}" alt="image"></span>
@@ -442,14 +444,14 @@
                                             </div>
                                             <div class="truncate ltr:pl-4 rtl:pr-4">
                                                 <h4 class="text-base">
-                                                    {{ Auth::guard('admin')->user()->name }}
+                                                    {{ Auth::guard('admin')->user()->name ?? 'User' }}
                                                 </h4>
-                                                <a class="text-black/60 hover:text-primary dark:text-dark-light/60 dark:hover:text-white" href="javascript:;">{{ Auth::guard('admin')->user()->email }}</a>
+                                                <a class="text-black/60 hover:text-primary dark:text-dark-light/60 dark:hover:text-white" href="javascript:;">{{ Auth::guard('admin')->user()->email ?? 'user@example.com' }}</a>
                                             </div>
                                         </div>
                                     </li>
                                     <li>
-                                        <a href="users-profile.html" class="dark:hover:text-white" @click="toggle">
+                                        <a href="javascript:void(0)" class="dark:hover:text-white" @click="toggle">
                                             <svg class="h-4.5 w-4.5 shrink-0 ltr:mr-2 rtl:ml-2" width="18" height="18" viewbox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                                                 <circle cx="12" cy="6" r="4" stroke="currentColor" stroke-width="1.5"></circle>
                                                 <path opacity="0.5" d="M20 17.5C20 19.9853 20 22 12 22C4 22 4 19.9853 4 17.5C4 15.0147 7.58172 13 12 13C16.4183 13 20 15.0147 20 17.5Z" stroke="currentColor" stroke-width="1.5"></path>

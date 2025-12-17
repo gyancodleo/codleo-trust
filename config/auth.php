@@ -27,7 +27,7 @@ return [
 
         'clients' => [
             'driver' => 'eloquent',
-            'model' => App\Models\client_users::class,
+            'model' => App\Models\ClientUser::class,
         ],
     ],
 

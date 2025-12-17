@@ -33,6 +33,6 @@ class PolciyCategoryController extends Controller
     public function destroy(policies_category $category)
     {
         $category->delete();
-        return redirect()->route('admin.policy.category')->with('success', 'Deleted.');
+        return back()->with('success', 'Deleted.');
     }
 }

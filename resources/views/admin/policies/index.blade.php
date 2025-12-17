@@ -51,13 +51,13 @@ use Illuminate\Support\Str;
                             @endif
                         </td>
                         <td class="p-2 flex items-center gap-2">
-                            <a href="{{ route('admin.policies.edit',$policy->id) }}" class="text-blue-600">Edit</a>
+                            <a href="{{ route('admin.policies.edit',$policy->id) }}" class="text-success">Edit</a>
 
                             <form action="{{ route('admin.policies.destroy',$policy->id) }}" method="POST"
                                 onsubmit="return confirm('Delete this policy?')">
                                 @csrf
                                 @method('DELETE')
-                                <button class="text-red-600">Delete</button>
+                                <button class="text-danger">Delete</button>
                             </form>
 
                             @if(!$policy->is_published)

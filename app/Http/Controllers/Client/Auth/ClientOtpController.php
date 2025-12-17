@@ -3,7 +3,7 @@
 namespace App\Http\Controllers\Client\Auth;
 
 use App\Http\Controllers\Controller;
-use App\Models\client_users;
+use App\Models\ClientUser;
 use App\Services\OtpService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -26,7 +26,7 @@ class ClientOtpController extends Controller
             'otp' => 'required'
         ]);
 
-        $client = client_users::find(Session::get('pending_client_id'));
+        $client = ClientUser::find(Session::get('pending_client_id'));
 
         if (!$client) {
             return redirect()->route('client.login');

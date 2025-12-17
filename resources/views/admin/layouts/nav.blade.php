@@ -1,5 +1,4 @@
        @php
-       print_r(request()->route()->getName());
        if (request()->routeIs('admin.users.*') || request()->routeIs('admin.clients.*')) {
        $activeDropdown = 'admin';
        } elseif (request()->routeIs('admin.policy') || request()->routeIs('admin.policies.*') || request()->routeIs('admin.policy.category')) {

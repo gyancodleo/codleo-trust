@@ -4,7 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
-use App\Models\client_users as Client;
+use App\Models\ClientUser;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Mail;
 use App\Mail\ClientUserCreateMail;
@@ -13,7 +13,7 @@ class ClientUserCreationController extends Controller
 {
     public function index()
     {
-        $clients = Client::with(['createdBy', 'updatedBy'])->get();
+        $clients = ClientUser::with(['createdBy', 'updatedBy'])->get();
         return view('admin.create-client-user', compact('clients'));
     }
 
@@ -33,7 +33,7 @@ class ClientUserCreationController extends Controller
 
         $plainPassword = $this->generateStrongPassword(12);
 
-        $user = Client::create([
+        $user = ClientUser::create([
             'name' => $request->name,
             'email' => $request->email,
             'password' => Hash::make($plainPassword),
@@ -46,7 +46,7 @@ class ClientUserCreationController extends Controller
         return back()->with('success', 'Client user created successfully. Login details sent to email.');
     }
 
-    public function update(Request $request, Client $user)
+    public function update(Request $request, ClientUser $user)
     {
         $rules = [
             'name'  => 'required',
@@ -76,11 +76,9 @@ class ClientUserCreationController extends Controller
         return back()->with('success', 'Client user updated successfully.');
     }
 
-    public function destroy(Client $user)
+    public function destroy(ClientUser $user)
     {
 
-        $user->delete();
-
-        return back()->with('success', 'Client user deleted.');
+        return $user->delete() ? back()->with('success', 'Client user deleted.') : back()->with('success', 'Client user not deleted.');
     }
 }

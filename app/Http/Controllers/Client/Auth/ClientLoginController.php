@@ -3,7 +3,7 @@
 namespace App\Http\Controllers\Client\Auth;
 
 use App\Http\Controllers\Controller;
-use App\Models\client_users;
+use App\Models\ClientUser;
 use App\Services\OtpService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
@@ -25,7 +25,7 @@ class ClientLoginController extends Controller
             'password' => 'required'
         ]);
 
-        $client = client_users::where('email', $request->email)->first();
+        $client = ClientUser::where('email', $request->email)->first();
 
         if (!$client || !Hash::check($request->password, $client->password)) {
             return back()->withErrors(['email' => 'Invalid Credentials']);

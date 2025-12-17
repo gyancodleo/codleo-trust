@@ -73,11 +73,11 @@
                         class="w-full border p-2 rounded" required>
 
                     <div class="flex justify-end mt-6">
-                        <button type="button" class="btn btn-danger mr-4" onclick="hideModal()">
+                        <button type="button" class="btn btn-danger mr-3" onclick="hideModal()">
                             Discard
                         </button>
 
-                        <button type="submit" class="btn btn-primary ml-4">
+                        <button type="submit" class="btn btn-primary ml-3">
                             Save
                         </button>
                     </div>

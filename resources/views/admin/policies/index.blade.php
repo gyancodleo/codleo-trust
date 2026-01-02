@@ -39,36 +39,36 @@ use Illuminate\Support\Str;
                         <td class="p-2">{{ $policy->category->name ?? '-' }}</td>
                         <td class="p-2">{{ str::limit($policy->description, 100 ?? '-') }}</td>
                         <td class="p-2">
-                            <a href="{{ route('admin.policy.preview', $policy->id) }}" class="text-blue-600">
-                                Preview
+                            <a href="{{ route('admin.policy.preview', $policy->id) }}" class="text-primary">
+                                <i class="fa-regular fa-eye text-primary"></i>&nbsp;Preview
                             </a>
                         </td>
                         <td class="p-2">
                             @if($policy->is_published)
-                            <span class="text-success">Published</span>
+                            <span class="text-gray-400">Published</span>
                             @else
-                            <span class="text-danger">Unpublished</span>
+                            <span class="text-gray-400">Unpublished</span>
                             @endif
                         </td>
                         <td class="p-2 flex items-center gap-2">
-                            <a href="{{ route('admin.policies.edit',$policy->id) }}" class="text-success">Edit</a>
+                            <a href="{{ route('admin.policies.edit',$policy->id) }}" class="text-success"><i class="fa-regular fa-pen-to-square text-success"></i></a>
 
                             <form action="{{ route('admin.policies.destroy',$policy->id) }}" method="POST"
                                 onsubmit="return confirm('Delete this policy?')">
                                 @csrf
                                 @method('DELETE')
-                                <button class="text-danger">Delete</button>
+                                <button class="text-danger"><i class="fa-solid fa-trash-can text-danger"></i></button>
                             </form>
 
                             @if(!$policy->is_published)
                             <form action="{{ route('admin.policies.publish',$policy->id) }}" method="POST">
                                 @csrf
-                                <button class="text-green-600">Publish</button>
+                                <button class="text-primary">Publish</button>
                             </form>
                             @else
                             <form action="{{ route('admin.policies.unpublish',$policy->id) }}" method="POST">
                                 @csrf
-                                <button class="text-gray-600">Unpublish</button>
+                                <button class="text-primary">Unpublish&nbsp;<i class="fa-solid fa-upload text-primary"></i></button>
                             </form>
                             @endif
                         </td>

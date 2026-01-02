@@ -8,6 +8,8 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Facades\Auth;
 use App\Models\Admin;
+use App\Models\AssignPolicyToUser;
+use App\Models\policies;
 
 class ClientUser extends Authenticatable
 {
@@ -79,5 +81,15 @@ class ClientUser extends Authenticatable
     public function updatedBy()
     {
         return $this->belongsTo(Admin::class, 'updated_by');
+    }
+
+    public function policies()
+    {
+        return $this->hasMany(policies::class,'policy_id');
+    }
+
+    public function assignedPolicies()
+    {
+        return $this->hasMany(AssignPolicyToUser::class,'client_user_id');
     }
 }

@@ -8,6 +8,8 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use App\Mail\AdminUserCreateMail;
 use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 
 class AdminUserCreationController extends Controller
 {
@@ -31,6 +33,10 @@ class AdminUserCreationController extends Controller
             'role'  => 'required|in:admin,super_admin'
         ]);
 
+        DB::beginTransaction();
+
+        try{
+
         $plainPassword = $this->generateStrongPassword();
 
         $user = Admin::create([
@@ -43,7 +49,27 @@ class AdminUserCreationController extends Controller
 
         Mail::to($user->email)->send(new AdminUserCreateMail($user, $plainPassword));
 
-        return back()->with('success', 'Admin user created successfully. Login details sent to email.');
+        DB::commit();
+
+        return back()->with('toast', 
+        [
+            'type'=>'success',
+            'message'=>'Admin user created successfully. Login details sent to email.'
+        ]);
+
+        } catch (\Throwable $e){
+
+            DB::rollBack();
+
+            Log::error("Admin User Creation Failed", [
+                'error'=>$e->getMessage(),
+            ]);
+
+            return back()->with('toast', [
+                'type'=>'error',
+                'message'=>'Failed to create admin user. Please try again.',
+            ]);
+        }
     }
 
     public function update(Request $request, Admin $user)
@@ -60,6 +86,10 @@ class AdminUserCreationController extends Controller
 
         $request->validate($rules);
 
+        DB::beginTransaction();
+
+        try {
+
         $data = [
             'name' => $request->name,
             'email' => $request->email,
@@ -73,7 +103,26 @@ class AdminUserCreationController extends Controller
 
         $user->update($data);
 
-        return back()->with('success', 'Admin user updated successfully.');
+        DB::commit();
+
+        return back()->with('toast', [
+            'type'=>'success',
+            'message'=>'Admin user updated successfully.'
+        ]);
+
+    } catch (\Throwable $e) {
+        DB::rollBack();
+
+        Log::error('Failed to update admin user', [
+            'error'=> $e->getMessage(),
+        ]);
+
+        return back()->with('toast',[
+            'type'=>'error',
+            'message'=>'Failed to update the user',
+        ]);
+    }
+
     }
 
     public function destroy(Admin $user)
@@ -84,6 +133,8 @@ class AdminUserCreationController extends Controller
 
         $user->delete();
 
-        return back()->with('success', 'Admin user deleted.');
+        return back()->with('toast', [
+            'type'=>'success',
+            'message'=>'Admin user deleted.']);
     }
 }

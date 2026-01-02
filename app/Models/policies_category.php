@@ -32,4 +32,7 @@ class policies_category extends Model
             }
         });
     }
+    public function policies() {
+        return $this->hasMany(policies::class, 'category_id');
+    }
 }

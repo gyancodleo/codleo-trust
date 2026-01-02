@@ -30,12 +30,12 @@
                             <button
                                 onclick="openEditModal('{{ $c->id }}', '{{ $c->name }}')"
                                 class="text-success">
-                                Edit
+                                <i class="fa-regular fa-pen-to-square text-success"></i>
                             </button>
                             <form method="POST" action="{{ route('admin.policy.category.delete',$c->id) }}">
                                 @csrf
                                 @method('DELETE')
-                                <button class="text-danger">Delete</button>
+                                <button class="text-danger"><i class="fa-solid fa-trash-can text-danger"></i></button>
                             </form>
                         </td>
                     </tr>

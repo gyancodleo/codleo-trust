@@ -8,6 +8,8 @@ use App\Models\policies_category;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 
 class PolicyController extends Controller
 {
@@ -26,31 +28,59 @@ class PolicyController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'title'        => 'required',
+            'title'        => 'required|string|max:255',
             'category_id'  => 'nullable|exists:policies_category,id',
             'description'  => 'nullable|string',
             'file'         => 'nullable|mimes:pdf|max:10240',
             'is_published' => 'nullable|boolean',
         ]);
 
-        $data = $request->only([
-            'title',
-            'category_id',
-            'description'
-        ]);
+        DB::beginTransaction();
 
-        if ($request->hasFile('file')) {
-            $data['file_path'] = $request->file('file')->store('policies', 'private');
+        try {
+            $data = $request->only([
+                'title',
+                'category_id',
+                'description',
+            ]);
+
+            // File upload
+            if ($request->hasFile('file')) {
+                $data['file_path'] = $request
+                    ->file('file')
+                    ->store('policies', 'private');
+            }
+
+            $data['is_published'] = $request->boolean('is_published', false);
+            $data['created_by']   = Auth::guard('admin')->id();
+            $data['updated_by']   = Auth::guard('admin')->id();
+
+            policies::create($data);
+
+            DB::commit();
+
+            return back()
+                ->with('toast', [
+                    'type' => 'success',
+                    'message' => 'Policy created successfully.',
+                ]);
+        } catch (\Throwable $e) {
+
+            DB::rollBack();
+
+            Log::error('Policy creation failed', [
+                'admin_id' => Auth::guard('admin')->id(),
+                'error' => $e->getMessage(),
+            ]);
+
+            return back()
+                ->with('toast', [
+                    'type' => 'error',
+                    'message' => 'Failed to create policy. Please try again.',
+                ]);
         }
-
-        $data['is_published'] = $request->boolean('is_published', false);
-        $data['created_by']   = Auth::guard('admin')->id();
-        $data['updated_by']   = Auth::guard('admin')->id();
-
-        policies::create($data);
-
-        return redirect()->route('admin.policies.index')->with('success', 'Policy created.');
     }
+
 
     public function edit(policies $policy)
     {
@@ -68,51 +98,146 @@ class PolicyController extends Controller
             'is_published' => 'nullable|boolean',
         ]);
 
-        $data = $request->only([
-            'title',
-            'category_id',
-            'description'
-        ]);
+        DB::beginTransaction();
 
-        if ($request->hasFile('file')) {
-            $policy->deleteFile();
-            $data['file_path'] = $request->file('file')->store('policies', 'private');
+        try {
+
+            $data = $request->only([
+                'title',
+                'category_id',
+                'description'
+            ]);
+
+            if ($request->hasFile('file')) {
+                $policy->deleteFile();
+                $data['file_path'] = $request->file('file')->store('policies', 'private');
+            }
+
+            $data['is_published'] = $request->boolean('is_published', false);
+            $data['updated_by']   = Auth::guard('admin')->id();
+
+            $policy->update($data);
+
+            DB::commit();
+
+            return back()
+                ->with('toast', [
+                    'type' => 'error',
+                    'message' => 'Failed to update policy. Please try again.',
+                ]);
+        } catch (\Throwable $e) {
+
+            DB::rollBack();
+
+            Log::error('Policy updation failed', [
+                'admin_id' => Auth::guard('admin')->id(),
+                'error' => $e->getMessage(),
+            ]);
+
+            return back()
+                ->with('toast', [
+                    'type' => 'error',
+                    'message' => 'Failed to update policy. Please try again.',
+                ]);
         }
-
-        $data['is_published'] = $request->boolean('is_published', false);
-        $data['updated_by']   = Auth::guard('admin')->id();
-
-        $policy->update($data);
-
-        return redirect()->route('admin.policies.index')->with('success', 'Policy updated.');
     }
 
     public function destroy(policies $policy)
     {
-        $policy->deleteFile();
-        $policy->delete();
 
-        return back()->with('success', 'Policy deleted.');
+        if ($policy->assignedUsers()->exists()) {
+            return back()->with('toast', [
+                'type' => 'error',
+                'message' => 'Policy cannot be deleted while assigned to users.',
+            ]);
+        }
+
+        DB::beginTransaction();
+
+        try {
+
+            if ($policy->file_path && Storage::disk('private')->exists($policy->file_path)) {
+                Storage::disk('private')->delete($policy->file_path);
+            }
+
+            $policy->delete();
+
+            DB::commit();
+
+            return back()->with('toast', [
+                'type' => 'success',
+                'message' => 'Policy deleted successfully.',
+            ]);
+        } catch (\Throwable $e) {
+
+            DB::rollBack();
+
+            Log::error('Policy deletion failed', [
+                'policy_id' => $policy->id,
+                'admin_id'  => Auth::guard('admin')->id(),
+                'error'     => $e->getMessage(),
+            ]);
+
+            return back()->with('toast', [
+                'type' => 'error',
+                'message' => 'Unable to delete policy. It may be in use.',
+            ]);
+        }
     }
 
     public function publish(policies $policy)
     {
-        $policy->update([
-            'is_published' => true,
-            'updated_by'   => Auth::guard('admin')->id(),
-        ]);
+        try {
 
-        return back()->with('success', 'Policy published.');
+            $policy->update([
+                'is_published' => true,
+                'updated_by'   => Auth::guard('admin')->id(),
+            ]);
+
+            return back()->with('toast', [
+                'type' => 'success',
+                'message' => 'Policy published successfully.',
+            ]);
+        } catch (\Throwable $e) {
+
+            Log::error('Policy publish failed', [
+                'policy_id' => $policy->id,
+                'admin_id'  => Auth::guard('admin')->id(),
+                'error'     => $e->getMessage(),
+            ]);
+
+            return back()->with('toast', [
+                'type' => 'error',
+                'message' => 'Failed to publish policy.',
+            ]);
+        }
     }
 
     public function unpublish(policies $policy)
     {
-        $policy->update([
-            'is_published' => false,
-            'updated_by'   => Auth::guard('admin')->id(),
-        ]);
+        try {
+            $policy->update([
+                'is_published' => false,
+                'updated_by'   => Auth::guard('admin')->id(),
+            ]);
 
-        return back()->with('success', 'Policy unpublished.');
+            return back()->with('toast', [
+                'type' => 'success',
+                'message' => 'Policy unpublished successfully.',
+            ]);
+        } catch (\Throwable $e) {
+
+            Log::error('Policy unpublish failed', [
+                'policy_id' => $policy->id,
+                'admin_id'  => Auth::guard('admin')->id(),
+                'error'     => $e->getMessage(),
+            ]);
+
+            return back()->with('toast', [
+                'type' => 'error',
+                'message' => 'Failed to unpublish policy.',
+            ]);
+        }
     }
 
     public function stream(policies $policy)

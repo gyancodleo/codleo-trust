@@ -3,10 +3,13 @@
 namespace App\Http\Controllers\Client;
 
 use App\Http\Controllers\Controller;
+use App\Models\AssignPolicyToUser;
+use App\Models\ClientUser;
 use App\Models\policies;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Auth;
 
 class ClientPolicyController extends Controller
 {
@@ -17,8 +20,8 @@ class ClientPolicyController extends Controller
 
     public function index()
     {
-        $policies = policies::all();
-        return view('client.dashboard', compact('policies'));
+        $policiesByCategory = AssignPolicyToUser::with('policy')->where('client_user_id', auth('client')->id())->get()->groupBy(fn($item) => optional($item->policy->category)->name ?? 'uncategorized');
+        return view('client.dashboard', compact('policiesByCategory'));
     }
 
     // 1) Return a blade that contains the viewer + watermark overlay
@@ -26,7 +29,7 @@ class ClientPolicyController extends Controller
     {
         $user = auth('client')->user();
 
-        if (! $policy->is_published) {
+        if (!$policy->is_published) {
             abort(404);
         }
 
@@ -54,7 +57,7 @@ class ClientPolicyController extends Controller
         // build path: assume files stored at storage/app/policies/private/{file_path}
         $path = $policy->file_path; // adapt to your storage layout
 
-        if (! Storage::disk('local')->exists($path)) {
+        if (!Storage::disk('local')->exists($path)) {
             abort(404);
         }
 

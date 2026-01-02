@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Transform Your Business with Salesforce & Agentforce</title>
+    <title>Codleo Trust | Our Policies</title>
     <link rel="icon" type="image/png" href="{{ asset('assets/images/codleo-favicon-round.png') }}">
     <link rel="icon" type="image/x-icon" href="{{ asset('assets/images/codleo-favicon-round.png') }}">
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -141,7 +141,7 @@
 
         .cards-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
             gap: 2rem;
         }
 
@@ -289,8 +289,6 @@
             </div>
             <ul class="nav-links">
                 <li><a href="#Policies">Policies</a></li>
-                <li><a href="#industries">Industries</a></li>
-                <li><a href="#agentforce">Agentforce</a></li>
                 <li><a href="#contact">Contact</a></li>
             </ul>
         </nav>
@@ -308,22 +306,25 @@
     <section class="section Policies" id="Policies">
         <h2 class="section-title">Your Assigned Codleo Policies</h2>
         <p class="section-subtitle">Access all policies that your organization is required to review. Each policy is kept updated to ensure alignment with compliance, security standards, and operational best practices.</p>
-        @if ($policies->isEmpty())
+        @if ($policiesByCategory == null || $policiesByCategory->isEmpty())
         <p style="text-align: center;">No Policies found.</p>
         @else
+        @foreach ($policiesByCategory as $categoryName=>$policies)
+        <h2 class="section-title" style="text-align:left;">{{ $categoryName }}&nbsp;Policies</h2>
         <div class="cards-grid">
             @foreach ($policies as $policy)
-            <a href="{{ route('client.policies.viewer', $policy->id) }}" style="text-decoration:none;">
+            <a href="{{ route('client.policies.viewer', $policy->policy_id) }}" style="text-decoration:none;">
                 <div class="card">
                     <div class="card-icon">
                         <img src="{{ asset('assets/images/policy-logo.png') }}" alt="logo" />
                     </div>
-                    <h3>{{ $policy->title }}</h3>
-                    <p>{{ $policy->description }}</p>
+                    <h3>{{ $policy->policy->title }}</h3>
+                    <p>{{ $policy->policy->description }}</p>
                 </div>
             </a>
             @endforeach
         </div>
+        @endforeach
         @endif
     </section>
 
@@ -366,7 +367,7 @@
         <div class="footer-content">
             <h3 style="margin-bottom: 1rem;">Ready to Transform Your Business?</h3>
             <p style="margin-bottom: 2rem;">Let's discuss how Salesforce and Agentforce can drive your growth</p>
-            <button class="cta-button">Contact Us Today</button>
+            <a class="cta-button" href="https://www.codleo.com/contact">Contact Us Today</a>
             <p style="margin-top: 3rem; color: #95a5a6;">© 2025 Codleo. Salesforce Partner. All rights reserved.</p>
         </div>
     </footer>

@@ -23,7 +23,7 @@
                         </h5>
                         <div class="relative ltr:ml-auto rtl:mr-auto">
                             <div class="grid h-11 w-11 place-content-center rounded-full bg-[#ffeccb] text-warning dark:bg-warning dark:text-[#ffeccb] text-lg font-semibold">
-                                {{ App\models\policies::count() ?? '0' }}
+                                {{ App\Models\policies::count() ?? '0' }}
                             </div>
                         </div>
                     </div>
@@ -35,7 +35,7 @@
                         </h5>
                         <div class="relative ltr:ml-auto rtl:mr-auto">
                             <div class="grid h-11 w-11 place-content-center rounded-full bg-[#ffeccb] text-warning dark:bg-warning dark:text-[#ffeccb] text-lg font-semibold">
-                                {{ App\models\policies_category::count() ?? '0' }}
+                                {{ App\Models\policies_category::count() ?? '0' }}
                             </div>
                         </div>
                     </div>
@@ -47,7 +47,7 @@
                         </h5>
                         <div class="relative ltr:ml-auto rtl:mr-auto">
                             <div class="grid h-11 w-11 place-content-center rounded-full bg-[#ffeccb] text-warning dark:bg-warning dark:text-[#ffeccb] text-lg font-semibold">
-                                {{ App\models\ClientUser::count() ?? '0' }}
+                                {{ App\Models\ClientUser::count() ?? '0' }}
                             </div>
                         </div>
                     </div>

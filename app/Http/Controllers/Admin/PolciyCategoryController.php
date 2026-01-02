@@ -3,8 +3,12 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Models\AssignPolicyToUser;
 use App\Models\policies_category;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Http\Request;
+use Throwable;
 
 class PolciyCategoryController extends Controller
 {
@@ -17,22 +21,106 @@ class PolciyCategoryController extends Controller
     public function store(Request $request)
     {
         $request->validate(['name' => 'required']);
-        policies_category::create(['name' => $request->name]);
 
-        return redirect()->route('admin.policy.category')->with('success', 'Category created.');
+        DB::beginTransaction();
+
+        try {
+
+            policies_category::create(['name' => $request->name]);
+
+            DB::commit();
+
+            return back()->with(
+                'toast',
+                [
+                    'type' => 'success',
+                    'message' => 'Policy Category created successfully.'
+                ]
+            );
+        } catch (Throwable $e) {
+
+            DB::rollBack();
+
+            Log::error("Failed to create category", [
+                'error' => $e->getMessage(),
+            ]);
+
+            return back()->with(
+                'toast',
+                [
+                    'type' => 'error',
+                    'message' => 'failed to create policy Category.'
+                ]
+            );
+        }
     }
 
     public function update(Request $request, policies_category $category)
     {
         $request->validate(['name' => 'required']);
-        $category->update(['name' => $request->name]);
 
-        return redirect()->route('admin.policy.category')->with('success', 'Updated.');
+        DB::beginTransaction();
+
+        try {
+
+            $category->update(['name' => $request->name]);
+
+            DB::commit();
+
+            return back()->with(
+                'toast',
+                [
+                    'type' => 'success',
+                    'message' => 'Policy Category Updated successfully.'
+                ]
+            );
+        } catch (Throwable $e) {
+
+            DB::rollBack();
+
+            Log::error("Failed to upate category", [
+                'error' => $e->getMessage(),
+            ]);
+
+            return back()->with(
+                'toast',
+                [
+                    'type' => 'error',
+                    'message' => 'failed to update policy Category.'
+                ]
+            );
+        }
     }
 
     public function destroy(policies_category $category)
     {
-        $category->delete();
-        return back()->with('success', 'Deleted.');
+        if ($category->policies()->exists()) {
+            return back()->with('toast', [
+                'type' => 'error',
+                'message' => 'Category cannot be deleted because policies are assigned.',
+            ]);
+        }
+
+        try {
+
+            $category->delete();
+
+            return back()->with('toast', [
+                'type' => 'success',
+                'message' => 'Category deleted successfully.',
+            ]);
+            
+        } catch (Throwable $e) {
+
+            Log::error('Policy category delete failed', [
+                'category_id' => $category->id,
+                'error' => $e->getMessage(),
+            ]);
+
+            return back()->with('toast', [
+                'type' => 'error',
+                'message' => 'Unable to delete category. It may be in use.',
+            ]);
+        }
     }
 }

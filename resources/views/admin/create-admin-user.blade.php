@@ -1,7 +1,9 @@
 @extends('admin.layouts.main')
 
 @section('main-content')
-
+@php
+$authAdmin = auth('admin')->user();
+@endphp
 <div class="dvanimation animate__animated p-6" :class="[$store.app.animation]">
     <!-- start main content section -->
     <div x-data="basic">
@@ -24,7 +26,6 @@
                         <th class="p-2 w-32">Actions</th>
                     </tr>
                 </thead>
-
                 <tbody>
                     @foreach($admins as $admin)
                     <tr class="border-b">
@@ -34,15 +35,18 @@
                         <td class="p-2">{{ $admin->is_2fa_enabled ? 'Enabled' : 'Disabled' }}</td>
 
                         <td class="p-2 flex gap-2">
-                            @if($admin->role == 'super_admin')
-                            <button onclick="openEditModal({{ $admin }})" class="text-primary">Edit</button>
+                            @can('update', $admin)
+                            <button onclick="openEditModal({{ $admin }})" class="text-primary"><i class="fa-regular fa-pen-to-square text-success"></i></button>
+                            @endcan
+                            {{-- DELETE --}}
+                            @can('delete', $admin)
                             <form action="{{ route('admin.users.destroy', $admin->id) }}"
                                 method="POST"
                                 onsubmit="return confirm('Delete this admin user?')">
                                 @csrf @method('DELETE')
-                                <button class="text-danger">Delete</button>
+                                <button class="text-danger"><i class="fa-solid fa-trash-can text-danger"></i></button>
                             </form>
-                            @endif
+                            @endcan
                         </td>
                     </tr>
                     @endforeach
@@ -79,12 +83,18 @@
                         <label class="block font-medium mb-1">Name</label>
                         <input type="text" name="name" id="nameInput"
                             class="w-full border p-2 rounded" required>
+                        @error('name')
+                        <span class="text-red-500 text-sm mt-1">{{ $message }}</span>
+                        @enderror
                     </div>
 
                     <div class="mb-4">
                         <label class="block font-medium mb-1">Email</label>
-                        <input type="email" name="email" id="emailInput"
+                        <input type="email" name="email" value="{{ old('email') }}" id="emailInput"
                             class="w-full border p-2 rounded" required>
+                        @error('email')
+                        <span class="text-red-500 text-sm mt-1">{{ $message }}</span>
+                        @enderror
                     </div>
 
                     <div class="mb-4">
@@ -93,6 +103,9 @@
                             <option value="admin">Admin</option>
                             <option value="super_admin">Super Admin</option>
                         </select>
+                        @error('role')
+                        <span class="text-red-500 text-sm mt-1">{{ $message }}</span>
+                        @enderror
                     </div>
 
                     <div class="mb-4 flex gap-2 items-center">

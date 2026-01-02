@@ -17,9 +17,16 @@ class IsSuperAdmin
     public function handle(Request $request, Closure $next): Response
     {
 
-        if(Auth::guard('admin')->user()->role !== 'super_admin'){
-            abort(403, 'Unauthorized Access');
+        $admin = Auth::guard('admin')->user();
+
+        if (!$admin) {
+            abort(403, 'Unauthorized');
         }
+
+        // if ($admin->role !== 'super_admin' || $admin->role !== 'admin') {
+        //     abort(403, 'Super admin access only');
+        // }
+
         return $next($request);
     }
 }

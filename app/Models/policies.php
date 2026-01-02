@@ -3,8 +3,9 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
-use App\Models\policies_category as Category;
+use App\Models\policies_category;
 use Illuminate\Support\Facades\Storage;
+use App\Models\AssignPolicyToUser;
 
 class policies extends Model
 {
@@ -24,7 +25,7 @@ class policies extends Model
 
     public function category()
     {
-        return $this->belongsTo(Category::class, 'category_id');
+        return $this->belongsTo(policies_category::class, 'category_id');
     }
 
     public function deleteFile()
@@ -32,5 +33,10 @@ class policies extends Model
         if ($this->file_path && Storage::disk('public')->exists($this->file_path)) {
             Storage::disk('public')->delete($this->file_path);
         }
+    }
+
+    public function assignedUsers()
+    {
+        return $this->hasMany(AssignPolicyToUser::class, 'policy_id');
     }
 }

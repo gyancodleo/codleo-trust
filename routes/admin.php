@@ -7,6 +7,7 @@ use App\Http\Controllers\Admin\Auth\Logout;
 use App\Http\Controllers\Admin\PolciyCategoryController;
 use App\Http\Controllers\Admin\AdminUserCreationController;
 use App\Http\Controllers\Admin\ClientUserCreationController;
+use App\Http\Controllers\Admin\AssignPoliciesController;
 use Illuminate\Support\Facades\Route;
 
 Route::prefix('admin')->name('admin.')->group(function () {
@@ -15,7 +16,7 @@ Route::prefix('admin')->name('admin.')->group(function () {
     Route::post('/login', [AdminLoginController::class, 'login']);
 
     Route::get('/otp', [AdminOtpController::class, 'showOtpForm'])->name('otp.form');
-    Route::post('/otp', [AdminOtpController::class, 'verifyOtp'])->name('otp.verify');
+    Route::post('/otp', [AdminOtpController::class, 'verifyOtp'])->name('otp.verify')->middleware('throttle:5,1');
 
     Route::post('/logout', Logout::class)->middleware('auth.admin')->name('logout');
 
@@ -46,18 +47,23 @@ Route::prefix('admin')->name('admin.')->group(function () {
         Route::put('policies/category/{category}', [PolciyCategoryController::class, 'update'])->name('policy.category.update');
         Route::delete('policies/category/{category}', [PolciyCategoryController::class, 'destroy'])->name('policy.category.delete');
 
+        
+        Route::post('policies/assingPolicy', [AssignPoliciesController::class, 'store'])->name('policy.assign');
+        Route::get('clients/{client}/assigned-policies', [AssignPoliciesController::class, 'getAssignedPolicies'])->name('clients.assigned-policies');
+        Route::get('clients/{client}/assigned-policies-ids', [AssignPoliciesController::class, 'getAssignedPolicyIds'])->name('clients.assigned.policy.ids');
+
         Route::resource('policies', PolicyController::class);
-    });
 
-    Route::middleware('is.super.admin')->group(function () {
-        Route::get('users', [AdminUserCreationController::class, 'index'])->name('users.index');
-        Route::post('users', [AdminUserCreationController::class, 'store'])->name('users.store');
-        Route::put('users/{user}', [AdminUserCreationController::class, 'update'])->name('users.update');
-        Route::delete('users/{user}', [AdminUserCreationController::class, 'destroy'])->name('users.destroy');
-    });
+        Route::middleware('is.super.admin')->group(function () {
+            Route::get('users', [AdminUserCreationController::class, 'index'])->name('users.index');
+            Route::post('users', [AdminUserCreationController::class, 'store'])->name('users.store');
+            Route::put('users/{user}', [AdminUserCreationController::class, 'update'])->name('users.update');
+            Route::delete('users/{user}', [AdminUserCreationController::class, 'destroy'])->name('users.destroy');
+        });
 
-    Route::get('clients', [ClientUserCreationController::class, 'index'])->name('clients.index');
-    Route::post('clients', [ClientUserCreationController::class, 'store'])->name('clients.store');
-    Route::put('clients/{client}', [ClientUserCreationController::class, 'update'])->name('clients.update');
-    Route::delete('clients/{client}', [ClientUserCreationController::class, 'destroy'])->name('clients.destroy');
+        Route::get('clients', [ClientUserCreationController::class, 'index'])->name('clients.index');
+        Route::post('clients', [ClientUserCreationController::class, 'store'])->name('clients.store');
+        Route::put('clients/{client}', [ClientUserCreationController::class, 'update'])->name('clients.update');
+        Route::delete('clients/{client}', [ClientUserCreationController::class, 'destroy'])->name('clients.destroy');
+    });
 });

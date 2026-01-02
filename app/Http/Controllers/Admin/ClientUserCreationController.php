@@ -7,14 +7,18 @@ use Illuminate\Http\Request;
 use App\Models\ClientUser;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\DB;
 use App\Mail\ClientUserCreateMail;
+use App\Models\policies;
+use Illuminate\Support\Facades\Log;
 
 class ClientUserCreationController extends Controller
 {
     public function index()
     {
-        $clients = ClientUser::with(['createdBy', 'updatedBy'])->get();
-        return view('admin.create-client-user', compact('clients'));
+        $clients = ClientUser::with(['createdBy', 'updatedBy'])->withCount('assignedPolicies')->get();
+        $policies = policies::select('id', 'title')->where('is_published', 1)->get();
+        return view('admin.create-client-user', compact('clients', 'policies'));
     }
 
     private function generateStrongPassword($length = 16)
@@ -43,7 +47,13 @@ class ClientUserCreationController extends Controller
 
         Mail::to($user->email)->send(new ClientUserCreateMail($user, $plainPassword));
 
-        return back()->with('success', 'Client user created successfully. Login details sent to email.');
+        return back()->with(
+            'toast',
+            [
+                'type' => 'success',
+                'message' => 'Client user created successfully. Login details sent to email.'
+            ]
+        );
     }
 
     public function update(Request $request, ClientUser $user)
@@ -73,12 +83,37 @@ class ClientUserCreationController extends Controller
 
         $user->update($data);
 
-        return back()->with('success', 'Client user updated successfully.');
+        return back()->with(
+            'toast',
+            [
+                'type' => 'success',
+                'message' => 'Client user updated successfully.'
+            ]
+        );
     }
 
-    public function destroy(ClientUser $user)
+    public function destroy(ClientUser $client)
     {
-
-        return $user->delete() ? back()->with('success', 'Client user deleted.') : back()->with('success', 'Client user not deleted.');
+        try {
+            $client->delete();
+            return back()->with(
+                'toast',
+                [
+                    'type' => 'success',
+                    'message' => 'Client user deleted.'
+                ]
+            );
+        } catch (\Throwable $e) {
+            Log::error("Failed to delete the client", [
+                'error' => $e->getMessage(),
+            ]);
+            return back()->with(
+                'toast',
+                [
+                    'type' => 'error',
+                    'message' => 'Unable to delete client.'
+                ]
+            );
+        }
     }
 }

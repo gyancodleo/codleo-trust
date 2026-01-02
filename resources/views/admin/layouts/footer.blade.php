@@ -12,7 +12,12 @@
 <script defer="" src="{{  asset('assets/js/alpine-focus.min.js' )}}"></script>
 <script defer="" src="{{  asset('assets/js/alpine.min.js' )}}"></script>
 <script src="{{  asset('assets/js/custom.js' )}}"></script>
-<script defer="" src="{{  asset('assets/js/apexcharts.js' )}}"></script>
+<!-- <script defer="" src="{{  asset('assets/js/apexcharts.js' )}}"></script> -->
+<script defer="" src="{{  asset('assets/css/highlight.min.css' )}}"></script>
+<script defer="" src="{{  asset('assets/js/highlight.min.js' )}}"></script>
+<!-- <script defer="" src="{{  asset('assets/js/nice-select2.js' )}}"></script> -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js" integrity="sha512-v2CJ7UaYy4JwqLDIrZUI/4hqeoQieOmAZNXBeQyjo21dadnwR+8ZaIJVT8EE2iyI61OV8e6M8PP2/4hpQINQ/g==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/js/select2.min.js" integrity="sha512-2ImtlRlf2VVmiGZsjm9bEyhjGW4dU7B6TNwh/hx/iSByxNENtj3WVE6o/9Lj4TJeVXPi4bnOIMXFIJJAeufa0A==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 
 <script>
     document.addEventListener('alpine:init', () => {
@@ -636,41 +641,24 @@
         }));
     });
 </script>
+@if(session()->has('toast'))
 <script>
-    // disable combos used to inspect
-    // document.addEventListener("keydown", function(e) {
-    //     const blocked = [
-    //         "u", // view source
-    //         "s", // save
-    //         "p", // print
-    //         "i", // dev tools
-    //         "j", // dev tools
-    //         "c", // inspect copy
-    //     ];
+    document.addEventListener('DOMContentLoaded', function() {
+        const toast = Swal.mixin({
+            toast: true,
+            position: 'top-end',
+            showConfirmButton: false,
+            timer: 3000,
+            padding: '2em',
+        });
 
-    //     if (e.ctrlKey && blocked.includes(e.key.toLowerCase())) {
-    //         e.preventDefault();
-    //     }
-
-    //     // F12 key
-    //     if (e.keyCode === 123) {
-    //         e.preventDefault();
-    //         disableSecureViewer();
-    //     }
-    // });
-
-    // disable right click
-    // document.addEventListener("contextmenu", e => e.preventDefault());
-
-    // anti-inspect self defencing
-    // setInterval(() => {
-    //     const element = new Image();
-    //     element.__proto__.toString = function() {
-    //         disableSecureViewer();
-    //     };
-    //     console.log(element);
-    // }, 2000);
+        toast.fire({
+            icon: "{{ session('toast.type') }}",
+            title: "{{ session('toast.message') }}",
+        });
+    });
 </script>
+@endif
 @yield('scripts')
 </body>
 

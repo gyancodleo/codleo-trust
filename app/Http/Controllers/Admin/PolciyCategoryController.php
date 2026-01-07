@@ -20,7 +20,15 @@ class PolciyCategoryController extends Controller
 
     public function store(Request $request)
     {
-        $request->validate(['name' => 'required']);
+        $request->validate([
+            'name' =>
+            [
+                'required',
+                'string',
+                'max:255',
+                'regex:/^[a-zA-Z][a-zA-Z0-9]*$/'
+            ],
+        ]);
 
         DB::beginTransaction();
 
@@ -109,7 +117,6 @@ class PolciyCategoryController extends Controller
                 'type' => 'success',
                 'message' => 'Category deleted successfully.',
             ]);
-            
         } catch (Throwable $e) {
 
             Log::error('Policy category delete failed', [

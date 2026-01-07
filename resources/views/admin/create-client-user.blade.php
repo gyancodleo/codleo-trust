@@ -96,18 +96,27 @@
                         <label class="block font-medium mb-1">Name</label>
                         <input type="text" name="name" id="nameInput"
                             class="w-full border p-2 rounded" required>
+                        @error('name')
+                        <span class="text-red-500 text-sm mt-1">{{ $message }}</span>
+                        @enderror
                     </div>
 
                     <div class="mb-4">
                         <label class="block font-medium mb-1">Email</label>
                         <input type="email" name="email" id="emailInput"
                             class="w-full border p-2 rounded" required>
+                        @error('email')
+                        <span class="text-red-500 text-sm mt-1">{{ $message }}</span>
+                        @enderror
                     </div>
 
                     <div class="mb-4">
                         <label class="block font-medium mb-1">Company Name</label>
                         <input type="text" name="company_name" id="companyInput"
                             class="w-full border p-2 rounded" required>
+                        @error('company_name')
+                        <span class="text-red-500 text-sm mt-1">{{ $message }}</span>
+                        @enderror
                     </div>
 
                     <div class="mb-4 flex gap-2 items-center">
@@ -245,7 +254,7 @@
         form.action = `/admin/clients/${client.id}`;
         document.getElementById('formMethod').value = 'PUT';
 
-        showModal();
+        showModal('adminUserModal');
     }
 
     function openAssignPolicy() {
@@ -339,5 +348,18 @@
         });
     });
 </script>
-
+@if($errors->any())
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        Swal.fire({
+            toast: true,
+            position: 'top-end',
+            icon: 'error',
+            title: @json($errors->first()),
+            showConfirmButton: false,
+            timer: 5000,
+        });
+    });
+</script>
+@endif
 @endsection

@@ -11,8 +11,9 @@ class TwoFactorCode extends Model
         'user_id',
         'user_type',
         'otp',
-        'expires_at'
+        'expires_at',
+        'otp_last_sent_at',
     ];
 
-    protected $dates = ['expires_at'];
+    protected $dates = ['expires_at'=>'datetime', 'otp_last_sent_at'=>'datetime'];
 }

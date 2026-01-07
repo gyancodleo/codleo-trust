@@ -16,7 +16,9 @@ Route::prefix('admin')->name('admin.')->group(function () {
     Route::post('/login', [AdminLoginController::class, 'login']);
 
     Route::get('/otp', [AdminOtpController::class, 'showOtpForm'])->name('otp.form');
-    Route::post('/otp', [AdminOtpController::class, 'verifyOtp'])->name('otp.verify')->middleware('throttle:5,1');
+    Route::post('/otp', [AdminOtpController::class, 'verifyOtp'])->name('otp.verify')->middleware('throttle:1,1');
+
+    Route::post('/otp/resend', [AdminOtpController::class, 'resendOtp'])->name('otp.resend')->middleware('throttle:1,1');
 
     Route::post('/logout', Logout::class)->middleware('auth.admin')->name('logout');
 

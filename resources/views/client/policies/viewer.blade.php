@@ -1,5 +1,6 @@
-<h1 class="text-xl font-semibold mb-4 text-center" style="text-align:center;">{{ $policy->title }}</h1>
 
+<h1 class="text-xl font-semibold mb-4 text-center" style="text-align:center;">{{ $policy->title }}</h1>
+<p class="text-sm dark pt-4 my-8" style="text-align: center;">{{ $policy->description }}</p>
 <div class="relative border shadow-sm">
 
     <div id="viewerContainer" class="relative border h-[90vh]" style="text-align: center;">

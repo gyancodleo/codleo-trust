@@ -15,6 +15,10 @@ class ClientLoginController extends Controller
 {
     public function showLoginForm()
     {
+        if (auth('client')->check()) {
+            return redirect()->route('client.dashboard');
+        }
+
         return view('client.auth.login');
     }
 

@@ -19,29 +19,41 @@
                     <div class="mb-4">
                         <label class="block font-semibold">Title</label>
                         <input type="text" name="title" value="{{ $policy->title }}" class="w-full border p-2 rounded" required>
+                        @error('title')
+                        <span class="text-danger mt-1 text-sm">{{ $message }}</span>
+                        @enderror
                     </div>
 
                     <div class="mb-4">
                         <label class="block font-semibold">Category</label>
-                        <select name="category_id" class="w-full border p-2 rounded">
+                        <select name="category_id" class="w-full border p-2 rounded" required>
                             <option value="">-- Select Category --</option>
                             @foreach($categories as $c)
                             <option value="{{ $c->id }}" @if($policy->category_id==$c->id) selected @endif>{{ $c->name }}</option>
                             @endforeach
                         </select>
+                        @error('category_id')
+                        <span class="text-danger mt-1 text-sm">{{ $message }}</span>
+                        @enderror
                     </div>
 
                     <div class="mb-4">
                         <label class="block font-semibold">Description</label>
-                        <textarea name="description" class="w-full border p-2 rounded" rows="4">{{ $policy->description }}</textarea>
+                        <textarea name="description" class="w-full border p-2 rounded" rows="4" required>{{ $policy->description }}</textarea>
+                        @error('description')
+                        <span class="text-danger mt-1 text-sm">{{ $message }}</span>
+                        @enderror
                     </div>
 
                     <div class="mb-4">
                         <label class="block font-semibold">Upload New PDF (optional)</label>
-                        <input type="file" name="file" accept="application/pdf" class="border p-2 rounded w-full">
+                        <input type="file" name="file" accept="application/pdf" class="border p-2 rounded w-full" required>
                         @if($policy->file_path)
                         <p class="text-sm mt-1">Current file: <strong>{{ $policy->file_path }}</strong></p>
                         @endif
+                        @error('file')
+                        <span class="text-danger mt-1 text-sm">{{ $message }}</span>
+                        @enderror
                     </div>
 
                     <div class="mb-4 flex items-center gap-2">

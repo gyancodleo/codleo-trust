@@ -37,7 +37,7 @@ use Illuminate\Support\Str;
                     <tr class="border-b">
                         <td class="p-2">{{ $policy->title }}</td>
                         <td class="p-2">{{ $policy->category->name ?? '-' }}</td>
-                        <td class="p-2">{{ str::limit($policy->description, 100 ?? '-') }}</td>
+                        <td class="p-2">{{ str::limit($policy->description, 60 ?? '-') }}</td>
                         <td class="p-2">
                             <a href="{{ route('admin.policy.preview', $policy->id) }}" class="text-primary">
                                 <i class="fa-regular fa-eye text-primary"></i>&nbsp;Preview
@@ -63,12 +63,12 @@ use Illuminate\Support\Str;
                             @if(!$policy->is_published)
                             <form action="{{ route('admin.policies.publish',$policy->id) }}" method="POST">
                                 @csrf
-                                <button class="text-primary">Publish</button>
+                                <button class="text-primary">Publish&nbsp;<i class="fa-solid fa-upload text-primary"></i></button>
                             </form>
                             @else
                             <form action="{{ route('admin.policies.unpublish',$policy->id) }}" method="POST">
                                 @csrf
-                                <button class="text-primary">Unpublish&nbsp;<i class="fa-solid fa-upload text-primary"></i></button>
+                                <button class="text-primary">Unpublish&nbsp;<i class="fa-solid fa-download text-primary"></i></button>
                             </form>
                             @endif
                         </td>

@@ -69,7 +69,7 @@
                     <input type="hidden" id="formMethod" name="_method" value="POST">
 
                     <label class="block text-sm font-medium mb-1">Category Name</label>
-                    <input type="text" name="name" id="categoryName"
+                    <input type="text" name="name" id="categoryName" value="{{ old('name') }}"
                         class="w-full border p-2 rounded" required>
 
                     <div class="flex justify-end mt-6">
@@ -129,4 +129,18 @@
         showModal();
     }
 </script>
+@if($errors->any())
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        Swal.fire({
+            toast: true,
+            position: 'top-end',
+            icon: 'error',
+            title: @json($errors->first()),
+            showConfirmButton: false,
+            timer: 5000,
+        });
+    });
+</script>
+@endif
 @endsection

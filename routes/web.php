@@ -9,12 +9,13 @@ use App\Http\Controllers\Client\Auth\ClientOtpController;
 use App\Http\Controllers\Client\ClientPolicyController;
 
 
-Route::get('/', [ClientLoginController::class, 'showLoginForm'])->name('client.login');
 Route::get('/login', [ClientLoginController::class, 'showLoginForm'])->name('client.login');
-Route::post('/', [ClientLoginController::class, 'login']);
+Route::post('/login', [ClientLoginController::class, 'login']);
+Route::get('/', fn () => redirect()->route('client.login'));
 
 Route::get('/otp', [ClientOtpController::class, 'showOtpForm'])->name('otp.form');
-Route::post('/otp', [ClientOtpController::class, 'verifyOtp'])->name('otp.verify');
+    Route::post('/otp/resend', [ClientOtpController::class, 'resendOtp'])->name('otp.resend')->middleware('throttle:3,1');
+Route::post('/otp', [ClientOtpController::class, 'verifyOtp'])->name('otp.verify')->middleware('throttle:3,1');
 
 Route::prefix('client')->name('client.')->group(function () {
     Route::middleware('auth.client')->group(function () {
@@ -28,7 +29,7 @@ Route::prefix('client')->name('client.')->group(function () {
             auth('client')->logout();
             session()->invalidate();
             session()->regenerateToken();
-            return response()->json(['status' => 'logged_out']);
+            return redirect()->route('client.login');
         })->name('force.logout');
     });
 });

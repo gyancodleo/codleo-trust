@@ -29,9 +29,9 @@ class PolicyController extends Controller
     {
         $request->validate([
             'title'        => 'required|string|max:255',
-            'category_id'  => 'nullable|exists:policies_category,id',
-            'description'  => 'nullable|string',
-            'file'         => 'nullable|mimes:pdf|max:10240',
+            'category_id'  => 'required|exists:policies_category,id',
+            'description'  => 'required|string',
+            'file'         => 'required|mimes:pdf|max:10240',
             'is_published' => 'nullable|boolean',
         ]);
 
@@ -92,9 +92,9 @@ class PolicyController extends Controller
     {
         $request->validate([
             'title'        => 'required',
-            'category_id'  => 'nullable|exists:policies_category,id',
-            'description'  => 'nullable|string',
-            'file'         => 'nullable|mimes:pdf|max:10240',
+            'category_id'  => 'required|exists:policies_category,id',
+            'description'  => 'required|string',
+            'file'         => 'required|mimes:pdf|max:10240',
             'is_published' => 'nullable|boolean',
         ]);
 

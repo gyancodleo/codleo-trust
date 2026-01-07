@@ -18,26 +18,38 @@
                 <div class="mb-4">
                     <label class="block font-semibold">Title</label>
                     <input type="text" name="title" value="{{ old('title') }}" class="w-full border p-2 rounded" required>
+                    @error('title')
+                    <span class="text-danger mt-1 text-sm">{{ $message }}</span>
+                    @enderror
                 </div>
 
                 <div class="mb-4">
                     <label class="block font-semibold">Category</label>
-                    <select name="category_id" class="w-full border p-2 rounded">
+                    <select name="category_id" class="w-full border p-2 rounded" required>
                         <option value="">-- Select Category --</option>
                         @foreach($categories as $c)
-                        <option value="{{ $c->id }}">{{ $c->name }}</option>
+                        <option value="{{ $c->id }}" {{ old('category_id') == $c->id ? 'selected' : '' }}>{{ $c->name }}</option>
                         @endforeach
                     </select>
+                    @error('category_id')
+                    <span class="text-danger mt-1 text-sm">{{ $message }}</span>
+                    @enderror
                 </div>
 
                 <div class="mb-4">
                     <label class="block font-semibold">Description</label>
-                    <textarea name="description" class="w-full border p-2 rounded" rows="4"></textarea>
+                    <textarea name="description" class="w-full border p-2 rounded" rows="4" required>{{ old('description') }}</textarea>
+                    @error('description')
+                    <span class="text-danger mt-1 text-sm">{{ $message }}</span>
+                    @enderror
                 </div>
 
                 <div class="mb-4">
                     <label class="block font-semibold">Upload PDF</label>
                     <input type="file" name="file" accept="application/pdf" class="border p-2 rounded w-full">
+                    @error('file')
+                    <span class="text-danger mt-1 text-sm">{{ $message }}</span>
+                    @enderror
                 </div>
 
                 <div class="mb-4 flex items-center gap-2">

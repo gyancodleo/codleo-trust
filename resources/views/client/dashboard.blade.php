@@ -83,7 +83,7 @@
     </style>
 </head>
 
-<body class="font-poppins bg-brand-light text-slate-800 flex flex-col min-h-screen selection:bg-brand-accent selection:text-white">
+<body class="font-poppins bg-brand-light text-slate-800 flex flex-col min-h-screen selection:bg-brand-accent selection:text-white" oncontextmenu="return false;">
 
     <!-- Modern Glass Header -->
     <header class="fixed w-full top-0 z-50 transition-all duration-300 backdrop-blur-md bg-white/80 border-b border-gray-100">
@@ -91,10 +91,11 @@
 
             <!-- Logo -->
             <div class="flex items-center gap-3 cursor-pointer group">
-                <div class="w-10 h-10 bg-gradient-to-br from-brand-dark to-brand-purple rounded-xl flex items-center justify-center text-white shadow-lg group-hover:shadow-brand-purple/30 transition-all">
+                <!-- <div class="w-10 h-10 bg-gradient-to-br from-brand-dark to-brand-purple rounded-xl flex items-center justify-center text-white shadow-lg group-hover:shadow-brand-purple/30 transition-all">
                     <i class="fa-solid fa-layer-group"></i>
                 </div>
-                <span class="text-xl font-bold text-brand-dark tracking-tight">Cod<span class="text-brand-accent">leo</span></span>
+                <span class="text-xl font-bold text-brand-dark tracking-tight">Cod<span class="text-brand-accent">leo</span></span> -->
+                <img src="{{  asset('images/Codleo-Logo-Black.png') }}" class="w-32" alt="codleo consulting">
             </div>
 
             <!-- User Profile -->
@@ -118,7 +119,7 @@
                         <p class="text-sm font-bold text-brand-dark">{{ Auth::guard('client')->user()->name ?? 'Hi User' }}</p>
                         <p class="text-xs text-gray-500">{{ Auth::guard('client')->user()->email ?? 'user@example.com' }}</p>
                     </div>
-                    <a href="#" class="flex items-center px-5 py-3 text-sm text-gray-600 hover:bg-gray-50 hover:text-brand-purple transition-colors">
+                    <a href="#" class="flex items-center px-5 py-3 text-sm text-gray-600 hover:bg-gray-50 hover:text-brand-purple transition-colors sm:hidden">
                         <i class="fa-regular fa-envelope"></i>&nbsp;{{ Auth::guard('client')->user()->email ?? 'user@example.com' }}
                     </a>
                     <form action="{{ route('client.force.logout') }}" class="inline" method="post">
@@ -195,7 +196,7 @@
                             <a href="#policies" class="bg-brand-accent hover:bg-[#d61e4b] text-white px-8 py-3.5 rounded-lg font-semibold shadow-glow transition-all transform hover:-translate-y-0.5 text-center">
                                 Browse Policies
                             </a>
-                            <a href="#" class="px-8 py-3.5 rounded-lg font-semibold text-white border border-white/30 hover:bg-white/10 transition-colors text-center backdrop-blur-sm">
+                            <a href="https://www.codleo.com/contact" target="_blank" class="px-8 py-3.5 rounded-lg font-semibold text-white border border-white/30 hover:bg-white/10 transition-colors text-center backdrop-blur-sm">
                                 Contact Support
                             </a>
                         </div>
@@ -273,7 +274,7 @@
                 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
                     @foreach ($policies as $policy)
                     <!-- Modern Card 1 -->
-                    <a href="{{ route('client.policies.viewer', $policy->policy_id) }}" target="_blank">
+                    <a href="{{ route('client.policies.viewer', $policy->policy_id) }}">
                         <div class="group bg-white rounded-3xl p-8 shadow-card border border-white hover:border-brand-purple/20 transition-all duration-300 hover:-translate-y-2 relative overflow-hidden">
                             <div class="absolute top-0 right-0 bg-brand-light w-24 h-24 rounded-bl-full -mr-4 -mt-4 transition-colors group-hover:bg-brand-purple/5"></div>
 
@@ -308,10 +309,11 @@
                 <!-- Brand Area -->
                 <div class="max-w-md">
                     <div class="flex items-center gap-3 mb-4">
-                        <div class="w-8 h-8 bg-brand-dark rounded-lg flex items-center justify-center text-white text-sm">
+                        <!-- <div class="w-8 h-8 bg-brand-dark rounded-lg flex items-center justify-center text-white text-sm">
                             <i class="fa-solid fa-layer-group"></i>
                         </div>
-                        <span class="text-lg font-bold text-brand-dark">Cod<span class="text-brand-accent">leo</span></span>
+                        <span class="text-lg font-bold text-brand-dark">Cod<span class="text-brand-accent">leo</span></span> -->
+                        <img src="{{  asset('images/Codleo-Logo-Black.png') }}" class="w-32" alt="codleo consulting">
                     </div>
                     <p class="text-gray-500 text-sm leading-relaxed">
                         <strong>Confidentiality Notice:</strong> The documents listed on this portal are for internal organizational use only. Distribution to external parties without written consent is strictly prohibited and monitored.
@@ -322,18 +324,17 @@
                 <div class="bg-brand-light p-6 rounded-2xl w-full lg:w-auto text-center lg:text-left">
                     <h4 class="text-brand-dark font-bold mb-2">Need Help?</h4>
                     <p class="text-sm text-gray-500 mb-4">Can't find the policy you're looking for?</p>
-                    <button onclick="alert('Opening Contact Form...')" class="w-full bg-white border border-gray-200 text-brand-dark font-semibold py-2 px-6 rounded-xl hover:bg-brand-accent hover:text-white hover:border-brand-accent transition-all shadow-sm">
-                        Contact HR Support
+                    <button onclick="window.open('https://www.codleo.com/contact', '_blank')" class="w-full bg-white border border-gray-200 text-brand-dark font-semibold py-2 px-6 rounded-xl hover:bg-brand-accent hover:text-white hover:border-brand-accent transition-all shadow-sm">
+                        Contact Us
                     </button>
                 </div>
             </div>
 
             <div class="border-t border-gray-100 pt-8 flex flex-col md:flex-row justify-between items-center gap-4 text-xs text-gray-400">
-                <p>&copy; {{ date('Y') }} Global Organization Inc.</p>
+                <p>&copy; {{ date('Y') }} All rights reserved by Codleo Consulting.</p>
                 <div class="flex gap-6">
-                    <a href="#" class="hover:text-brand-purple transition">Privacy</a>
-                    <a href="#" class="hover:text-brand-purple transition">Terms</a>
-                    <a href="#" class="hover:text-brand-purple transition">Sitemap</a>
+                    <a href="https://www.codleo.com/privacy-policy" class="hover:text-brand-purple transition">Privacy Policy</a>
+                    <a href="https://www.codleo.com/terms-and-conditions" class="hover:text-brand-purple transition">Terms & Conditions</a>
                 </div>
             </div>
         </div>
@@ -380,6 +381,73 @@
                 }
             });
         });
+
+        const securityAlert = document.getElementById('security-alert');
+
+        function triggerSecurityAlert() {
+            securityAlert.classList.remove('hidden');
+            securityAlert.classList.add('flex');
+        }
+
+        function dismissAlert() {
+            securityAlert.classList.add('hidden');
+            securityAlert.classList.remove('flex');
+        }
+
+        // A. Disable Right Click
+        document.addEventListener('contextmenu', event => event.preventDefault());
+
+        // B. Disable Keyboard Shortcuts (Inspect, Save, Print)
+        document.addEventListener('keydown', function(e) {
+            // Disable F12, Ctrl+Shift+I, Ctrl+Shift+J, Ctrl+U
+            if (
+                e.key === 'F12' ||
+                (e.ctrlKey && e.shiftKey && (e.key === 'I' || e.key === 'J' || e.key === 'C')) ||
+                (e.ctrlKey && e.key === 'U')
+            ) {
+                autoLogout();
+            }
+
+            // Disable Ctrl+S (Save), Ctrl+P (Print)
+            if (e.ctrlKey && (e.key === 's' || e.key === 'p')) {
+                autoLogout();
+            }
+        });
+
+        // C. Screenshot Deterrent (PrintScreen Key)
+        // Note: Browsers cannot strictly Block OS screenshots, but we can detect the key 
+        // and blur the screen or clear the clipboard content immediately.
+        document.addEventListener('keyup', (e) => {
+            if (e.key === 'PrintScreen') {
+                navigator.clipboard.writeText(''); // Clear clipboard
+                document.body.classList.add('blur-screen');
+                autoLogout();
+            }
+        });
+
+        // D. Developer Tools Detection (Debugger Trap)
+        // This slows down the script execution if DevTools are open
+        setInterval(() => {
+            const start = new Date();
+            debugger; // This pauses execution if DevTools is open
+            const end = new Date();
+            if (end - start > 100) {
+                document.body.innerHTML = '<h1 style="color:red; text-align:center; margin-top:50px;">Developer Tools Detected. Access Denied.</h1>';
+                autoLogout();
+            }
+        }, 1000);
+
+        function autoLogout() {
+            fetch("{{ route('client.force.logout') }}", {
+                method: "POST",
+                headers: {
+                    "X-CSRF-TOKEN": "{{ csrf_token() }}",
+                    "Accept": "application/json"
+                }
+            }).then(() => {
+                window.location.href = "/login"; // or client login route
+            });
+        }
     </script>
 </body>
 

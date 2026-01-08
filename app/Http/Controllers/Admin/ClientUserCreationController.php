@@ -56,12 +56,12 @@ class ClientUserCreationController extends Controller
         );
     }
 
-    public function update(Request $request, ClientUser $user)
+    public function update(Request $request, ClientUser $client)
     {
         $rules = [
             'name'  => 'required',
-            'email' => "required|email|unique:client_users,email,{$user->id}",
-            'company_role' => 'required',
+            'email' => "required|email|unique:client_users,email,{$client->id}",
+            'company_name' => 'required',
         ];
 
         if ($request->password) {
@@ -81,7 +81,7 @@ class ClientUserCreationController extends Controller
             $data['password'] = Hash::make($request->password);
         }
 
-        $user->update($data);
+        $client->update($data);
 
         return back()->with(
             'toast',

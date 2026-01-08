@@ -123,7 +123,7 @@
 
         // Set form for update
         const form = document.getElementById('categoryForm');
-        form.action = `/admin/policy/category/update/${id}`;
+        form.action = "{{ route('admin.policy.category.update', ':id') }}".replace(':id', id);
         document.getElementById('formMethod').value = 'PUT';
 
         showModal();

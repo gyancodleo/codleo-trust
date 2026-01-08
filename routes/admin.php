@@ -46,7 +46,7 @@ Route::prefix('admin')->name('admin.')->group(function () {
         // policy category
         Route::get('policies/category', [PolciyCategoryController::class, 'index'])->name('policy.category');
         Route::post('policies/category', [PolciyCategoryController::class, 'store'])->name('policy.category.store');
-        Route::put('policies/category/{category}', [PolciyCategoryController::class, 'update'])->name('policy.category.update');
+        Route::put('policies/category/{category}', [PolciyCategoryController::class, 'updateCategory'])->name('policy.category.update');
         Route::delete('policies/category/{category}', [PolciyCategoryController::class, 'destroy'])->name('policy.category.delete');
 
         

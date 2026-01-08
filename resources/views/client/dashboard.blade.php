@@ -1,3 +1,9 @@
+@php
+$user = Auth::guard('client')->user();
+if(!$user){
+return redirect()->route('login');
+}
+@endphp
 <!DOCTYPE html>
 <html lang="en" class="scroll-smooth">
 
@@ -177,7 +183,7 @@
                     <div class="lg:w-1/2 text-center lg:text-left">
                         <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/10 border border-white/20 text-xs font-semibold tracking-wide uppercase mb-6 text-brand-accent bg-opacity-10 backdrop-blur-sm">
                             <span class="w-2 h-2 rounded-full bg-brand-accent animate-pulse"></span>
-                            Codleo Official Policy Portal
+                            Policies Dashboard
                         </div>
 
                         <h1 class="text-4xl md:text-5xl lg:text-6xl font-bold leading-tight mb-6">
@@ -250,7 +256,7 @@
             <!-- Category Header -->
             <div class="flex flex-col md:flex-row justify-between items-end mb-12 border-b border-gray-200 pb-4">
                 <div>
-                    <h2 class="text-3xl font-bold text-brand-dark">Your Assigned Codleo Policies</h2>
+                    <h2 class="text-3xl font-bold text-brand-dark">Codleo Policies</h2>
                     <p class="text-gray-500 mt-2">Access all policies that your organization is required to review. Each policy is kept updated to ensure alignment with compliance, security standards, and operational best practices.</p>
                 </div>
 
@@ -264,7 +270,8 @@
             <!-- Category 1: HR -->
             <div class="mb-16">
                 @if ($policiesByCategory == null || $policiesByCategory->isEmpty())
-                <p style="text-align: center;">No Policies found.</p>
+                <p class="text-center text-dark-500">No Policies Assigned.</p>
+                <p class="text-center text-gray-500">Please log out and then log back in. If the issue persists, kindly reach out to Codleo for further assistance.</p>
                 @else
                 @foreach ($policiesByCategory as $categoryName=>$policies)
                 <div class="flex items-center gap-4 mb-8 pl-2 mt-12">

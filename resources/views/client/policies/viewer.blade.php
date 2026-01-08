@@ -5,7 +5,7 @@ return redirect()->route('login');
 }
 @endphp
 <!DOCTYPE html>
-<html lang="en" class="select-none">
+<html lang="en" class="scroll-smooth">
 
 <head>
     <meta charset="UTF-8">
@@ -49,6 +49,23 @@ return redirect()->route('login');
     </script>
 
     <style>
+        @media print {
+            body * {
+                display: none !important;
+            }
+
+            body::after {
+                content: "CONFIDENTIAL: PRINTING & SAVING DISABLED";
+                display: flex !important;
+                justify-content: center;
+                align-items: center;
+                height: 100vh;
+                font-size: 24pt;
+                color: red;
+                font-weight: bold;
+            }
+        }
+
         /* DISABLING SELECTION & DRAGGING */
         body {
             -webkit-user-select: none;
@@ -173,28 +190,37 @@ return redirect()->route('login');
         <!-- RIGHT PANEL: PDF VIEWER (SECURE CANVAS) -->
         <div class="md:w-2/3 lg:w-3/4 bg-gray-600 rounded-2xl shadow-inner overflow-hidden flex flex-col relative">
 
-            <!-- Toolbar -->
-            <div class="bg-brand-black text-white px-4 py-2 flex justify-between items-center text-sm">
-                <span id="page_num">Page 1 / --</span>
-                <div class="flex gap-2">
-                    <button id="prev" class="w-8 h-8 rounded hover:bg-white/10 flex items-center justify-center"><i class="fa-solid fa-chevron-left"></i></button>
-                    <button id="next" class="w-8 h-8 rounded hover:bg-white/10 flex items-center justify-center"><i class="fa-solid fa-chevron-right"></i></button>
+            <!-- TOOLBAR -->
+            <div class="bg-gray-900 text-gray-300 h-14 flex items-center justify-between px-4 shadow-md z-30 flex-none border-b border-gray-700">
+                <div class="flex items-center gap-2">
+                    <button id="prev" class="hover:bg-gray-700 hover:text-white px-3 py-1.5 rounded transition"><i class="fa-solid fa-chevron-left"></i></button>
+                    <span id="page_info" class="text-xs font-mono w-24 text-center">Loading...</span>
+                    <button id="next" class="hover:bg-gray-700 hover:text-white px-3 py-1.5 rounded transition"><i class="fa-solid fa-chevron-right"></i></button>
                 </div>
-                <div class="flex gap-2">
-                    <button id="zoom_out" class="w-8 h-8 rounded hover:bg-white/10"><i class="fa-solid fa-minus"></i></button>
-                    <button id="zoom_in" class="w-8 h-8 rounded hover:bg-white/10"><i class="fa-solid fa-plus"></i></button>
+
+                <div class="flex items-center gap-4">
+                    <div class="flex items-center bg-gray-800 rounded-lg overflow-hidden border border-gray-600">
+                        <button id="zoom_out" class="px-3 py-1.5 hover:bg-gray-700 hover:text-white transition border-r border-gray-600"><i class="fa-solid fa-minus"></i></button>
+                        <span id="zoom_level" class="text-xs font-mono px-3 w-16 text-center text-white">50%</span>
+                        <button id="zoom_in" class="px-3 py-1.5 hover:bg-gray-700 hover:text-white transition border-l border-gray-600"><i class="fa-solid fa-plus"></i></button>
+                    </div>
                 </div>
             </div>
 
-            <!-- Canvas Container -->
-            <div id="canvas-container" class="flex-grow overflow-auto flex justify-center p-8 relative bg-gray-500">
-                <!-- The PDF Pages render here as canvases -->
-                <canvas id="the-canvas" class="shadow-2xl"></canvas>
+            <!-- CANVAS CONTAINER -->
+            <!-- Note: overflow-auto here handles the scrollbars when canvas gets big -->
+            <!-- Note: "flex justify-center" keeps it centered when small, but allows scroll when big -->
+            <div id="pdf-container" class="flex-1 overflow-auto relative bg-gray-700 p-8 text-center">
 
-                <!-- Digital Watermark (Repeated) -->
-                <div class="watermark pointer-events-none select-none">
-                    CONFIDENTIAL - Codleo consulting - {{ \Illuminate\Support\Facades\Request::ip() }}
+                <div class="inline-block relative shadow-2xl">
+                    <!-- The PDF Canvas -->
+                    <!-- Removed conflicting CSS width classes -->
+                    <canvas id="the-canvas" class="block bg-white mx-auto"></canvas>
+
+                    <!-- Watermark Layer (Attached to the canvas container) -->
+                    <div id="watermark" class="watermark"></div>
                 </div>
+
             </div>
         </div>
     </main>
@@ -211,56 +237,63 @@ return redirect()->route('login');
 
     <!-- JAVASCRIPT LOGIC -->
     <script>
-        // 1. PDF.js CONFIGURATION
-        // Using a generic sample PDF for demonstration. Replace 'url' with your actual PDF path.
         const url = `{{ route('client.policies.stream', $policy->id) }}`;
 
         let pdfDoc = null,
             pageNum = 1,
             pageRendering = false,
             pageNumPending = null,
-            scale = 1.5,
+            scale = 0.5,
             canvas = document.getElementById('the-canvas'),
-            ctx = canvas.getContext('2d');
+            ctx = canvas.getContext('2d'),
+            renderTask = null;
 
-        /**
-         * Get page info from document, resize canvas accordingly, and render page.
-         */
+        const zoomLevelDisplay = document.getElementById('zoom_level');
+        const pdfContainer = document.getElementById('pdf-container');
+
         function renderPage(num) {
             pageRendering = true;
-            // Fetch page
+
             pdfDoc.getPage(num).then(function(page) {
-                var viewport = page.getViewport({
+
+                const viewport = page.getViewport({
                     scale: scale
                 });
+
                 canvas.height = viewport.height;
                 canvas.width = viewport.width;
+                canvas.style.height = viewport.height + 'px';
+                canvas.style.width = viewport.width + 'px';
 
-                // Render PDF page into canvas context
-                var renderContext = {
+                if (renderTask) {
+                    renderTask.cancel();
+                }
+
+                const renderContext = {
                     canvasContext: ctx,
                     viewport: viewport
                 };
-                var renderTask = page.render(renderContext);
 
-                // Wait for render to finish
+                renderTask = page.render(renderContext);
+
                 renderTask.promise.then(function() {
                     pageRendering = false;
+                    renderTask = null;
                     if (pageNumPending !== null) {
                         renderPage(pageNumPending);
                         pageNumPending = null;
                     }
+
+                    updateWatermark(viewport.width, viewport.height);
+                }).catch(function(error) {
+                    // Ignore zoom cancellation errors
                 });
             });
 
-            // Update page counters
-            document.getElementById('page_num').textContent = `Page ${num} / ${pdfDoc.numPages}`;
+            document.getElementById('page_info').textContent = `Page ${num} / ${pdfDoc.numPages}`;
+            zoomLevelDisplay.textContent = `${Math.round(scale * 100)}%`;
         }
 
-        /**
-         * If another page rendering in progress, waits until the rendering is
-         * finised. Otherwise, executes rendering immediately.
-         */
         function queueRenderPage(num) {
             if (pageRendering) {
                 pageNumPending = num;
@@ -269,43 +302,32 @@ return redirect()->route('login');
             }
         }
 
-        /**
-         * Displays previous page.
-         */
-        function onPrevPage() {
+        // 3. ZOOM CONTROLS
+        document.getElementById('zoom_in').addEventListener('click', () => {
+            if (scale >= 4.0) return;
+            scale += 0.25; // Increase scale factor
+            renderPage(pageNum);
+        });
+
+        document.getElementById('zoom_out').addEventListener('click', () => {
+            if (scale <= 0.5) return;
+            scale -= 0.25; // Decrease scale factor
+            renderPage(pageNum);
+        });
+
+        document.getElementById('prev').addEventListener('click', () => {
             if (pageNum <= 1) return;
             pageNum--;
             queueRenderPage(pageNum);
-        }
-        document.getElementById('prev').addEventListener('click', onPrevPage);
+        });
 
-        /**
-         * Displays next page.
-         */
-        function onNextPage() {
+        document.getElementById('next').addEventListener('click', () => {
             if (pageNum >= pdfDoc.numPages) return;
             pageNum++;
             queueRenderPage(pageNum);
-        }
-        document.getElementById('next').addEventListener('click', onNextPage);
-
-        /**
-         * Zoom Controls
-         */
-        document.getElementById('zoom_in').addEventListener('click', () => {
-            scale += 0.2;
-            renderPage(pageNum);
-        });
-        document.getElementById('zoom_out').addEventListener('click', () => {
-            if (scale > 0.6) {
-                scale -= 0.2;
-                renderPage(pageNum);
-            }
         });
 
-        /**
-         * Asynchronously downloads PDF.
-         */
+        // Initialize PDF
         pdfjsLib.getDocument(url).promise.then(function(pdfDoc_) {
             pdfDoc = pdfDoc_;
             renderPage(pageNum);
@@ -344,6 +366,43 @@ return redirect()->route('login');
             // Disable Ctrl+S (Save), Ctrl+P (Print)
             if (e.ctrlKey && (e.key === 's' || e.key === 'p')) {
                 autoLogout();
+            }
+        });
+
+        // 1. BLOCK THE SPECIFIC SHORTCUT (Ctrl+Shift+S)
+        document.addEventListener('keydown', function(e) {
+            // Detect Ctrl + Shift + S (Standard Browser Screenshot shortcut)
+            if (e.ctrlKey && e.shiftKey && (e.key === 's' || e.key === 'S')) {
+                e.preventDefault();
+                e.stopPropagation();
+                alert('Security Restriction: Screenshot tool disabled.');
+                return false;
+            }
+        });
+
+        // 2. THE BLUR TRAP (Hides content if they click the Browser Menu)
+        const contentContainer = document.getElementById('pdf-container');
+
+        // When window loses focus (User clicks browser menu or switches tabs)
+        window.addEventListener('blur', () => {
+            contentContainer.style.filter = 'blur(20px) grayscale(100%)';
+            contentContainer.style.opacity = '0.1';
+            document.body.style.backgroundColor = '#000';
+        });
+
+        // When window regains focus (User clicks back on the document)
+        window.addEventListener('focus', () => {
+            contentContainer.style.filter = 'none';
+            contentContainer.style.opacity = '1';
+            document.body.style.backgroundColor = '#f8fafc'; // Restore brand color
+        });
+
+        // 3. VISIBILITY API (Hides content if they minimize or switch tabs)
+        document.addEventListener("visibilitychange", () => {
+            if (document.hidden) {
+                contentContainer.style.opacity = '0';
+            } else {
+                contentContainer.style.opacity = '1';
             }
         });
 

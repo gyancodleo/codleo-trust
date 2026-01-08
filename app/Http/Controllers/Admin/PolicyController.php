@@ -91,10 +91,10 @@ class PolicyController extends Controller
     public function update(Request $request, policies $policy)
     {
         $request->validate([
-            'title'        => 'required',
+            'title'        => 'required|string|max:255',
             'category_id'  => 'required|exists:policies_category,id',
             'description'  => 'required|string',
-            'file'         => 'required|mimes:pdf|max:10240',
+            'file'         => 'nullable|mimes:pdf|max:10240',
             'is_published' => 'nullable|boolean',
         ]);
 
@@ -120,10 +120,10 @@ class PolicyController extends Controller
 
             DB::commit();
 
-            return back()
+            return redirect()->route('admin.policy')
                 ->with('toast', [
-                    'type' => 'error',
-                    'message' => 'Failed to update policy. Please try again.',
+                    'type' => 'success',
+                    'message' => 'Policy updated Successfully.',
                 ]);
         } catch (\Throwable $e) {
 

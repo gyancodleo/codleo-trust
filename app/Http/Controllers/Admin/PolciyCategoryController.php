@@ -20,15 +20,20 @@ class PolciyCategoryController extends Controller
 
     public function store(Request $request)
     {
-        $request->validate([
-            'name' =>
+        $request->validate(
             [
-                'required',
-                'string',
-                'max:255',
-                'regex:/^[a-zA-Z][a-zA-Z0-9]*$/'
+                'name' =>
+                [
+                    'required',
+                    'string',
+                    'max:50',
+                    'regex:/^[a-zA-Z0-9 ]+$/',
+                ]
             ],
-        ]);
+            [
+                'name.regex' => 'Policy category must only contain letters, numbers, and spaces.',
+            ]
+        );
 
         DB::beginTransaction();
 
@@ -63,9 +68,24 @@ class PolciyCategoryController extends Controller
         }
     }
 
-    public function update(Request $request, policies_category $category)
+    public function updateCategory(Request $request, $category)
     {
-        $request->validate(['name' => 'required']);
+        $category = policies_category::findOrFail($category);
+
+        $request->validate(
+            [
+                'name' =>
+                [
+                    'required',
+                    'string',
+                    'max:50',
+                    'regex:/^[a-zA-Z0-9 ]+$/',
+                ]
+            ],
+            [
+                'name.regex' => 'Policy category must only contain letters, numbers, and spaces.',
+            ]
+        );
 
         DB::beginTransaction();
 

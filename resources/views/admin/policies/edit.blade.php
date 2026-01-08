@@ -46,8 +46,8 @@
                     </div>
 
                     <div class="mb-4">
-                        <label class="block font-semibold">Upload New PDF (optional)</label>
-                        <input type="file" name="file" accept="application/pdf" class="border p-2 rounded w-full" required>
+                        <label class="block font-semibold">Upload New PDF</label>
+                        <input type="file" name="file" accept="application/pdf" class="border p-2 rounded w-full">
                         @if($policy->file_path)
                         <p class="text-sm mt-1">Current file: <strong>{{ $policy->file_path }}</strong></p>
                         @endif

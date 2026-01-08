@@ -18,7 +18,7 @@
         </div>
 
         <div class="flex items-center justify-between mt-4">
-            <span><button type="button" class="text-sm text-primary mt-3" id="resendOtpBtn">Resend Otp </button>&nbsp;<span id="otpTimer" class="text-xs text-gray-500 mt-1"></span></span>
+            <!-- <span><button type="button" class="text-sm text-primary mt-3" id="resendOtpBtn">Resend Otp </button>&nbsp;<span id="otpTimer" class="text-xs text-gray-500 mt-1"></span></span> -->
             <x-primary-button class="ms-3">
                 {{ __('submit') }}
             </x-primary-button>

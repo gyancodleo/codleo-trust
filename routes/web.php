@@ -10,11 +10,11 @@ use App\Http\Controllers\Client\ClientPolicyController;
 
 
 Route::get('/login', [ClientLoginController::class, 'showLoginForm'])->name('client.login');
-Route::post('/login', [ClientLoginController::class, 'login']);
+Route::post('/login', [ClientLoginController::class, 'login'])->middleware('throttle:5,1');
 Route::get('/', fn () => redirect()->route('client.login'));
 
 Route::get('/otp', [ClientOtpController::class, 'showOtpForm'])->name('otp.form');
-    Route::post('/otp/resend', [ClientOtpController::class, 'resendOtp'])->name('otp.resend')->middleware('throttle:3,1');
+    Route::post('/otp/resend', [ClientOtpController::class, 'resendOtp'])->name('otp.resend')->middleware('throttle:2,5');
 Route::post('/otp', [ClientOtpController::class, 'verifyOtp'])->name('otp.verify')->middleware('throttle:3,1');
 
 Route::prefix('client')->name('client.')->group(function () {

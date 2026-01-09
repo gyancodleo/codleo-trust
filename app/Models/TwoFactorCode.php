@@ -13,7 +13,9 @@ class TwoFactorCode extends Model
         'otp',
         'expires_at',
         'otp_last_sent_at',
+        'attempts',
+        'locked_until',
     ];
 
-    protected $dates = ['expires_at'=>'datetime', 'otp_last_sent_at'=>'datetime'];
+    protected $casts = ['expires_at'=>'datetime', 'otp_last_sent_at'=>'datetime', 'locked_until'=>'datetime',];
 }

@@ -39,6 +39,11 @@ class AdminLoginController extends Controller
             $otp = $otpService->generate($admin, 'admin');
 
             Session::put('pending_admin_id', $admin->id);
+            session(
+                [
+                    'otp_resend_available_at' => now()->addSeconds(60)->timestamp
+                ]
+            );
 
             Mail::raw("Your Admin OTP is: $otp", function ($msg) use ($admin) {
                 $msg->to($admin->email)->subject("Admin Login OTP");

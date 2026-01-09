@@ -40,6 +40,9 @@ class ClientLoginController extends Controller
             $otp = $otpService->generate($client, 'client');
 
             Session::put('pending_client_id', $client->id);
+            session([
+                'otp_resend_available_at'=>now()->addSeconds(60)->timestamp
+            ]);
 
             Mail::raw("Your OTP is: $otp", function ($msg) use ($client) {
                 $msg->to($client->email)->subject("Login OTP");

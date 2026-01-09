@@ -20,7 +20,9 @@ class AdminOtpController extends Controller
             return redirect()->route('admin.login');
         }
 
-        return view('admin.auth.otp');
+        return view('admin.auth.otp',[
+            'otpResendAt'=>session('otp_resend_available_at')
+        ]);
     }
 
     public function verifyOtp(Request $request, OtpService $otpService)
@@ -43,33 +45,35 @@ class AdminOtpController extends Controller
 
         $request->session()->regenerate();
 
-        Session::forget('pending_admin_id');
+        Session::forget(['pending_admin_id', 'otp_resend_available_at']);
 
         return redirect()->route('admin.dashboard');
     }
 
     public function resendOtp(OtpService $otpService)
     {
-        $adminId = Admin::find(Session::get('pending_admin_id'));
+        $admin = Admin::find(Session::get('pending_admin_id'));
 
-        if (!$adminId) {
-            return redirect()->route('admin.login');
+        if (!$admin) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Session Expired'
+            ], 401);
         }
 
-        $admin = Admin::find($adminId);
-
-        $otp = $otpService->generateAndResend($admin->id, 'admin');
-
-        Session::put("pending_admin_id", $admin->id);
-
         try {
+
+            $otp = $otpService->generate($admin, 'admin');
 
             Mail::raw("Your Admin OTP is: $otp", function ($msg) use ($admin) {
                 $msg->to($admin->email)->subject("Admin Login OTP");
             });
 
-            return response()->json(['status' => 'success', 'message' => 'OTP resent successfully']);
-        } catch (\Throwable $e) {
+            return response()->json(
+                ['status' => 'success', 'message' => 'OTP resent successfully', 'cooldown_seconds'=>60]
+                );
+
+        } catch (\Symfony\Component\HttpKernel\Exception\HttpException $e) {
             Log::error('OTP resend failed', [
                 'admin_id' => $admin->id,
                 'error' => $e->getMessage(),
@@ -78,7 +82,8 @@ class AdminOtpController extends Controller
             return response()->json([
                 'status' => 'error',
                 'message' => 'Failed to resend OTP.',
-            ], 500);
+                'remaining_seconds'=>$e->getStatusCode() === 429 ? 60 : null
+            ], $e->getStatusCode());
         }
     }
 }

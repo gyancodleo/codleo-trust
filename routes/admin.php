@@ -13,12 +13,12 @@ use Illuminate\Support\Facades\Route;
 Route::prefix('admin')->name('admin.')->group(function () {
 
     Route::get('/login', [AdminLoginController::class, 'showLoginForm'])->name('login');
-    Route::post('/login', [AdminLoginController::class, 'login']);
+    Route::post('/login', [AdminLoginController::class, 'login'])->middleware('throttle:5,1');
 
     Route::get('/otp', [AdminOtpController::class, 'showOtpForm'])->name('otp.form');
-    Route::post('/otp', [AdminOtpController::class, 'verifyOtp'])->name('otp.verify')->middleware('throttle:1,1');
+    Route::post('/otp', [AdminOtpController::class, 'verifyOtp'])->name('otp.verify')->middleware('throttle:5,1');
 
-    Route::post('/otp/resend', [AdminOtpController::class, 'resendOtp'])->name('otp.resend')->middleware('throttle:1,1');
+    Route::post('/otp/resend', [AdminOtpController::class, 'resendOtp'])->name('otp.resend')->middleware('throttle:2,5');
 
     Route::post('/logout', Logout::class)->middleware('auth.admin')->name('logout');
 

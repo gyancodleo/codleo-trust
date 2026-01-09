@@ -15,6 +15,8 @@ return Application::configure(basePath: dirname(__DIR__))
             'auth.admin'=> \App\Http\Middleware\AdminAuthenticate::class,
             'auth.client'=>\App\Http\Middleware\ClientUserAuthenticate::class,
             'is.super.admin'=>\App\Http\Middleware\IsSuperAdmin::class,
+            'throttle.admin'=>\App\Http\Middleware\AdminRequestThrottle::class,
+            'throttle.client'=>\App\Http\Middleware\ClientRequestThrottle::class,
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {

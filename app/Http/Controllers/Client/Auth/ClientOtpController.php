@@ -19,7 +19,7 @@ class ClientOtpController extends Controller
             return redirect()->route('client.login');
         }
 
-        return view('client.auth.otp');
+        return view('client.auth.otp', ['otpResendAt' => session('otp_resend_available_at')]);
     }
 
     public function verifyOtp(Request $request, OtpService $otpService)
@@ -40,42 +40,44 @@ class ClientOtpController extends Controller
 
         Auth::guard('client')->login($client);
 
-        Session::forget('pending_client_id');
+        Session::forget(['pending_client_id', 'otp_resend_available_at']);
 
         return redirect()->route('client.dashboard');
     }
 
     public function resendOtp(OtpService $otpService)
     {
-        $clientID = ClientUser::find(Session::get('pending_client_id'));
+        $client = ClientUser::find(Session::get('pending_client_id'));
 
-        if (!$clientID) {
-            return redirect()->route('client.login');
+        if (!$client) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Session Expired'
+            ], 401);
         }
 
-        $client = ClientUser::find($clientID);
-
-        $otp = $otpService->generate($client, 'client');
-
-        Session::put('pending_client_id', $client->id);
-
         try {
+
+            $otp = $otpService->generate($client, 'client');
 
             Mail::raw("Your OTP is: $otp", function ($msg) use ($client) {
                 $msg->to($client->email)->subject("Login OTP");
             });
 
-            return response()->json(['status' => 'success', 'message' => 'OTP resent successfully']);
-        } catch (\Throwable $e) {
+            return response()->json(
+                ['status' => 'success', 'message' => 'OTP resent successfully', 'cooldown_seconds' => 60]
+            );
+        } catch (\Symfony\Component\HttpKernel\Exception\HttpException $e) {
             Log::error('OTP resend failed', [
-                'admin_id' => $client->id,
+                'client_id' => $client->id,
                 'error' => $e->getMessage(),
             ]);
 
             return response()->json([
                 'status' => 'error',
                 'message' => 'Failed to resend OTP.',
-            ], 500);
+                'remaining_seconds' => $e->getStatusCode() === 429 ? 60 : null
+            ], $e->getStatusCode());
         }
     }
 }

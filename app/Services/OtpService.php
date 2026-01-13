@@ -13,6 +13,7 @@ class OtpService
     protected int $expiryMinutes = 10;
     protected int $maxAttempts = 3;
     protected int $lockMinutes = 15;
+
     public function generate($user, $userType)
     {
         $record = TwoFactorCode::where('user_id', $user->id)

@@ -17,6 +17,10 @@ return Application::configure(basePath: dirname(__DIR__))
             'is.super.admin'=>\App\Http\Middleware\IsSuperAdmin::class,
             'throttle.admin'=>\App\Http\Middleware\AdminRequestThrottle::class,
             'throttle.client'=>\App\Http\Middleware\ClientRequestThrottle::class,
+            'client.session'=>\App\Http\Middleware\ClientSession::class,
+            'admin.session'=>\App\Http\Middleware\AdminSession::class,
+            'admin.otp.pending' => \App\Http\Middleware\AdminOtpPending::class,
+            'client.otp.pending' => \App\Http\Middleware\ClientOtpPending::class,
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {

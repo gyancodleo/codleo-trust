@@ -40,7 +40,9 @@ class ClientOtpController extends Controller
 
         Auth::guard('client')->login($client);
 
-        Session::forget(['pending_client_id', 'otp_resend_available_at']);
+        Session::forget(['pending_client_id', 'otp_resend_available_at', 'client_otp_pending']);
+
+        $request->session()->regenerate();
 
         return redirect()->route('client.dashboard');
     }

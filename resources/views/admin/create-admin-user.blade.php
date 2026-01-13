@@ -16,7 +16,7 @@ $authAdmin = auth('admin')->user();
             <div class="text-success">{{ session('success') }}</div>
             @endif
 
-            <table class="w-full border">
+            <table class="w-full text-left border">
                 <thead class="bg-gray-100">
                     <tr>
                         <th class="p-2">Name</th>

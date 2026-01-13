@@ -28,10 +28,12 @@ class PolciyCategoryController extends Controller
                     'string',
                     'max:50',
                     'regex:/^[a-zA-Z0-9 ]+$/',
+                    'unique:policies_category,name',
                 ]
             ],
             [
                 'name.regex' => 'Policy category must only contain letters, numbers, and spaces.',
+                'name.unique' => 'Policy category already exist with this name.',
             ]
         );
 
@@ -80,10 +82,12 @@ class PolciyCategoryController extends Controller
                     'string',
                     'max:50',
                     'regex:/^[a-zA-Z0-9 ]+$/',
+                    'unique:policies_category,name',
                 ]
             ],
             [
                 'name.regex' => 'Policy category must only contain letters, numbers, and spaces.',
+                'name.unique' => 'Policy category already exist with this name.',
             ]
         );
 

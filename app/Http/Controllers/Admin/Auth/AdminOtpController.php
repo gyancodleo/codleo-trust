@@ -20,8 +20,8 @@ class AdminOtpController extends Controller
             return redirect()->route('admin.login');
         }
 
-        return view('admin.auth.otp',[
-            'otpResendAt'=>session('otp_resend_available_at')
+        return view('admin.auth.otp', [
+            'otpResendAt' => session('otp_resend_available_at')
         ]);
     }
 
@@ -43,9 +43,9 @@ class AdminOtpController extends Controller
 
         Auth::guard('admin')->login($admin);
 
-        $request->session()->regenerate();
+        Session::forget(['pending_admin_id', 'otp_resend_available_at', 'admin_otp_pending']);
 
-        Session::forget(['pending_admin_id', 'otp_resend_available_at']);
+        $request->session()->regenerate();
 
         return redirect()->route('admin.dashboard');
     }
@@ -70,9 +70,8 @@ class AdminOtpController extends Controller
             });
 
             return response()->json(
-                ['status' => 'success', 'message' => 'OTP resent successfully', 'cooldown_seconds'=>60]
-                );
-
+                ['status' => 'success', 'message' => 'OTP resent successfully', 'cooldown_seconds' => 60]
+            );
         } catch (\Symfony\Component\HttpKernel\Exception\HttpException $e) {
             Log::error('OTP resend failed', [
                 'admin_id' => $admin->id,
@@ -82,7 +81,7 @@ class AdminOtpController extends Controller
             return response()->json([
                 'status' => 'error',
                 'message' => 'Failed to resend OTP.',
-                'remaining_seconds'=>$e->getStatusCode() === 429 ? 60 : null
+                'remaining_seconds' => $e->getStatusCode() === 429 ? 60 : null
             ], $e->getStatusCode());
         }
     }

@@ -10,22 +10,23 @@ use App\Http\Controllers\Admin\ClientUserCreationController;
 use App\Http\Controllers\Admin\AssignPoliciesController;
 use Illuminate\Support\Facades\Route;
 
-Route::prefix('admin')->name('admin.')->group(function () {
+Route::prefix('admin')->name('admin.')->middleware('admin.session')->group(function () {
 
     Route::get('/login', [AdminLoginController::class, 'showLoginForm'])->name('login');
-    Route::post('/login', [AdminLoginController::class, 'login'])->middleware('throttle:5,1');
+    Route::post('/login', [AdminLoginController::class, 'login'])->middleware('throttle:3,1');
 
-    Route::get('/otp', [AdminOtpController::class, 'showOtpForm'])->name('otp.form');
-    Route::post('/otp', [AdminOtpController::class, 'verifyOtp'])->name('otp.verify')->middleware('throttle:5,1');
-
-    Route::post('/otp/resend', [AdminOtpController::class, 'resendOtp'])->name('otp.resend')->middleware('throttle:2,5');
-
-    Route::post('/logout', Logout::class)->middleware('auth.admin')->name('logout');
+    Route::middleware('admin.otp.pending')->group(function () {
+        Route::get('/otp', [AdminOtpController::class, 'showOtpForm'])->name('otp.form');
+        Route::post('/otp', [AdminOtpController::class, 'verifyOtp'])->name('otp.verify')->middleware('throttle:3,1');
+        Route::post('/otp/resend', [AdminOtpController::class, 'resendOtp'])->name('otp.resend')->middleware('throttle:3,5');
+    });
 
     Route::middleware('auth.admin')->group(function () {
         Route::get('/dashboard', function () {
             return view('admin.dashboard');
         })->name('dashboard');
+
+        Route::post('/logout', Logout::class)->name('logout');
 
         //policy crud routes
         Route::get('policies/policy', [PolicyController::class, 'index'])->name('policy');
@@ -49,7 +50,7 @@ Route::prefix('admin')->name('admin.')->group(function () {
         Route::put('policies/category/{category}', [PolciyCategoryController::class, 'updateCategory'])->name('policy.category.update');
         Route::delete('policies/category/{category}', [PolciyCategoryController::class, 'destroy'])->name('policy.category.delete');
 
-        
+
         Route::post('policies/assingPolicy', [AssignPoliciesController::class, 'store'])->name('policy.assign');
         Route::get('clients/{client}/assigned-policies', [AssignPoliciesController::class, 'getAssignedPolicies'])->name('clients.assigned-policies');
         Route::get('clients/{client}/assigned-policies-ids', [AssignPoliciesController::class, 'getAssignedPolicyIds'])->name('clients.assigned.policy.ids');

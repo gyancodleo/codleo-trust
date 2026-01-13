@@ -402,7 +402,10 @@ return redirect()->route('login');
         }
 
         // A. Disable Right Click
-        document.addEventListener('contextmenu', event => event.preventDefault());
+        document.addEventListener('contextmenu', function() {
+            event => event.preventDefault()
+            autoLogout();
+        });
 
         // B. Disable Keyboard Shortcuts (Inspect, Save, Print)
         document.addEventListener('keydown', function(e) {

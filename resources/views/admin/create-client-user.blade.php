@@ -24,7 +24,7 @@
             <div class="text-success">{{ session('success') }}</div>
             @endif
 
-            <table class="w-full border">
+            <table class="w-full text-left border">
                 <thead class="bg-gray-100">
                     <tr>
                         <th class="p-2">Name</th>
@@ -244,11 +244,23 @@
 
     function openEditModal(client) {
         document.getElementById('modalTitle').innerText = 'Edit client User';
-
         document.getElementById('nameInput').value = client.name;
-        document.getElementById('emailInput').value = client.email;
+        const emailInput = document.getElementById('emailInput');
+        emailInput.value = client.email;
+        emailInput.setAttribute('readonly', true);
+        emailInput.setAttribute('disabled', true);
         document.getElementById('companyInput').value = client.company_name;
         document.getElementById('twoFactorInput').checked = client.is_2fa_enabled == 1;
+
+        if (emailInput && !document.getElementById('email-warning')) {
+            const warning = document.createElement('span');
+            warning.id = 'email-warning';
+            warning.classList.add("block", "mt-1", "text-xs", "text-gray-600");
+            warning.innerText =
+                "Email is not editable. If you want to edit it, delete the current user and create a new one.";
+
+            emailInput.after(warning);
+        }
 
         const form = document.getElementById('clientUserForm');
         form.action = `/admin/clients/${client.id}`;
@@ -355,7 +367,7 @@
             toast: true,
             position: 'top-end',
             icon: 'error',
-            title: @json($errors->first()),
+            title: @json($errors - > first()),
             showConfirmButton: false,
             timer: 5000,
         });

@@ -20,7 +20,9 @@ class ClientPolicyController extends Controller
 
     public function index()
     {
-        $policiesByCategory = AssignPolicyToUser::with('policy')->where('client_user_id', auth('client')->id())->get()->groupBy(fn($item) => optional($item->policy->category)->name ?? 'uncategorized');
+        $policiesByCategory = AssignPolicyToUser::with(['policy' => function ($query) {
+            $query->where('is_published',1);
+        }, 'policy.category'])->where('client_user_id', auth('client')->id())->get()->filter(fn ($item) => $item->policy)->groupBy(fn($item) => optional($item->policy->category)->name ?? 'uncategorized');
         return view('client.dashboard', compact('policiesByCategory'));
     }
 

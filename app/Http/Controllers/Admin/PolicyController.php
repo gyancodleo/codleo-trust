@@ -59,10 +59,17 @@ class PolicyController extends Controller
 
             DB::commit();
 
-            return back()
-                ->with('toast', [
+            // return back()
+            //     ->with('toast', [
+            //         'type' => 'success',
+            //         'message' => 'Policy created successfully.',
+            //         'redirect'=>'admin.policies.index',
+            //     ]);
+            return redirect()->route('admin.policies.policy')
+            ->with('toast', [
                     'type' => 'success',
                     'message' => 'Policy created successfully.',
+                    'redirect'=>'admin.policies.index',
                 ]);
         } catch (\Throwable $e) {
 

@@ -38,9 +38,10 @@ class AdminLoginController extends Controller
 
             $otp = $otpService->generate($admin, 'admin');
 
-            Session::put('pending_admin_id', $admin->id);
-            session(
+            Session::put(
                 [
+                    'admin_otp_pending' => true,
+                    'pending_admin_id' => $admin->id,
                     'otp_resend_available_at' => now()->addSeconds(60)->timestamp
                 ]
             );

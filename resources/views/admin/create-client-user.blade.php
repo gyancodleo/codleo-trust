@@ -367,7 +367,7 @@
             toast: true,
             position: 'top-end',
             icon: 'error',
-            title: @json($errors - > first()),
+            title: @json($errors->first()),
             showConfirmButton: false,
             timer: 5000,
         });
